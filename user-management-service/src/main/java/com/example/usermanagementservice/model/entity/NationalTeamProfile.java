@@ -10,4 +10,5 @@ public class NationalTeamProfile extends UserProfile{
     private String federationName;  // اسم الاتحاد الوطني لكرة القدم
     private String contactPerson;   // الشخص المسؤول للتواصل
     private String email;           // الإيميل الرسمي للتواصل
+    private String country;
 }

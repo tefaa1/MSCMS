@@ -16,15 +16,25 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
         </processorPath>
         <module name="notification-messaging-service" />
-        <module name="player-service" />
         <module name="medical-fitness-service" />
         <module name="user-management-service" />
         <module name="reports-analytics-service" />
         <module name="training-match-service" />
       </profile>
+      <profile name="Annotation profile for player-service" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+        </processorPath>
+        <module name="player-service" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Multi-sport-Club-Management-system" target="21" />
+      <module name="squad-service" target="21" />
+      <module name="squid-service" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -33,6 +43,8 @@
       <module name="notification-messaging-service" options="-parameters" />
       <module name="player-service" options="-parameters" />
       <module name="reports-analytics-service" options="-parameters" />
+      <module name="squad-service" options="-parameters" />
+      <module name="squid-service" options="-parameters" />
       <module name="training-match-service" options="-parameters" />
       <module name="user-management-service" options="-parameters" />
     </option>

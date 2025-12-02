@@ -12,7 +12,7 @@
     <artifactId>player-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>player-service</name>
-    <description>notification-messaging-service</description>
+    <description>squad-service</description>
     <url/>
     <licenses>
         <license/>

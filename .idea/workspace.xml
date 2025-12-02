@@ -54,8 +54,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Enum" />
         <option value="Record" />
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
@@ -113,6 +113,11 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.example.playerservice.model.enums" />
+    </key>
+  </component>
   <component name="RunDashboard">
     <option name="configurationTypes">
       <set>
@@ -123,6 +128,17 @@
     </option>
   </component>
   <component name="RunManager" selected="Spring Boot.UserManagementServiceApplication">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="squad-service" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="squad-service" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
     <configuration name="MedicalFitnessServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="medical-fitness-service" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.medicalfitnessservice.MedicalFitnessServiceApplication" />
@@ -184,7 +200,7 @@
       <updated>1764616215526</updated>
       <workItem from="1764616216591" duration="1388000" />
       <workItem from="1764617615950" duration="1402000" />
-      <workItem from="1764663183895" duration="5576000" />
+      <workItem from="1764663183895" duration="18276000" />
     </task>
     <servers />
   </component>
