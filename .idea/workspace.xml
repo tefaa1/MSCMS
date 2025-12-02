@@ -8,6 +8,10 @@
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/medical-fitness-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/medical-fitness-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notification-messaging-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/notification-messaging-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/player-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/reports-analytics-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/reports-analytics-service/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/training-match-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/training-match-service/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user-management-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/user-management-service/pom.xml" afterDir="false" />
@@ -50,6 +54,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Enum" />
+        <option value="Record" />
         <option value="Class" />
       </list>
     </option>
@@ -178,7 +184,7 @@
       <updated>1764616215526</updated>
       <workItem from="1764616216591" duration="1388000" />
       <workItem from="1764617615950" duration="1402000" />
-      <workItem from="1764663183895" duration="2244000" />
+      <workItem from="1764663183895" duration="5576000" />
     </task>
     <servers />
   </component>
