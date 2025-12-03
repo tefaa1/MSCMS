@@ -21,7 +21,9 @@ public class PlayerTransferIncoming {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long playerId;
+    @ManyToOne
+    @JoinColumn(name = "outer_player_id")
+    private OuterPlayer outerPlayer;
 
     @ManyToOne
     @JoinColumn(name = "from_team_id")

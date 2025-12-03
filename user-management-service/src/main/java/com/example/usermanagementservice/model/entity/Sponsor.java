@@ -1,26 +1,28 @@
 package com.example.usermanagementservice.model.entity;
 
 import com.example.usermanagementservice.model.enums.Role;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "fans")
-public class Fan extends User {
+@Table(name = "sponsors")
+public class Sponsor extends User {
 
-    private String displayName;
-    private Long favoriteTeamId;
+    private String companyName;
+    private String contactPerson;
+    private String email;
+    private LocalDate contractStart;
+    private LocalDate contractEnd;
 
     @Enumerated(EnumType.STRING)
-    private Role role = Role.FAN;
+    private Role role = Role.SPONSOR;
 }

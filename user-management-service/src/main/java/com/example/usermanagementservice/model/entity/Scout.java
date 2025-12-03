@@ -15,12 +15,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "fans")
-public class Fan extends User {
+@Table(name = "scouts")
+public class Scout extends User {
 
-    private String displayName;
-    private Long favoriteTeamId;
+    private String region;
+    private String organizationName;
 
     @Enumerated(EnumType.STRING)
-    private Role role = Role.FAN;
+    private Role role = Role.SCOUT;
+
 }

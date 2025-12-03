@@ -8,6 +8,4 @@ public enum StaffRole {
     PERFORMANCE_ANALYST,
     TEAM_DOCTOR,
     PHYSIOTHERAPIST,
-    SPORT_MANAGER,
-    BOARD_MEMBER
 }

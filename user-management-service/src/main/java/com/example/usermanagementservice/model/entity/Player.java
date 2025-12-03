@@ -1,14 +1,25 @@
 package com.example.usermanagementservice.model.entity;
 
 import com.example.usermanagementservice.model.enums.Position;
+import com.example.usermanagementservice.model.enums.Role;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "players")
-public class PlayerProfile extends UserProfile{
+public class Player extends User {
 
 
     private LocalDate dateOfBirth;
@@ -16,4 +27,7 @@ public class PlayerProfile extends UserProfile{
     private Position preferredPosition;
     private Long marketValue;
     private Integer kitNumber; // from 1 to 99 handle in request dto
+
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.PLAYER;
 }

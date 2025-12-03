@@ -1,6 +1,6 @@
-package com.example.usermanagementservice.model.entity;
+package com.example.usermanagementservice.model.entity.staff;
 
-import com.example.usermanagementservice.model.enums.Role;
+import com.example.usermanagementservice.model.enums.StaffRole;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -15,12 +15,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "fans")
-public class Fan extends User {
+@Table(name = "performance_analyst")
+public class PerformanceAnalyst extends StaffMember{
 
-    private String displayName;
-    private Long favoriteTeamId;
+    private String toolsUsed;    // WyScout, Instat...
 
     @Enumerated(EnumType.STRING)
-    private Role role = Role.FAN;
+    private StaffRole staffRole = StaffRole.PERFORMANCE_ANALYST;
 }
