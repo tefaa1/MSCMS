@@ -5,19 +5,38 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="98b33b49-cde2-4143-8723-4da10ac0bae4" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-messaging-service/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/notification-mail-service/.gitattributes" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-messaging-service/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/notification-mail-service/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-messaging-service/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/notification-mail-service/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-messaging-service/mvnw" beforeDir="false" afterPath="$PROJECT_DIR$/notification-mail-service/mvnw" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-messaging-service/mvnw.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/notification-mail-service/mvnw.cmd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-messaging-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/notification-mail-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-messaging-service/src/main/java/com/example/notificationmessagingservice/NotificationMessagingServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/notification-mail-service/src/main/java/com/example/notificationmessagingservice/NotificationMessagingServiceApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-messaging-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/notification-mail-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-messaging-service/src/test/java/com/example/notificationmessagingservice/NotificationMessagingServiceApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/notification-mail-service/src/test/java/com/example/notificationmessagingservice/NotificationMessagingServiceApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/.gitattributes" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/mvnw" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/mvnw" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/mvnw.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/mvnw.cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/com/example/playerservice/PlayerServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/main/java/com/example/playerservice/PlayerServiceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/com/example/playerservice/model/embeddable/NationalTeamRef.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/main/java/com/example/playerservice/model/embeddable/NationalTeamRef.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/com/example/playerservice/model/embeddable/PlayerRef.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/main/java/com/example/playerservice/model/embeddable/PlayerRef.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/com/example/playerservice/model/entity/OuterPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/main/java/com/example/playerservice/model/entity/OuterPlayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/com/example/playerservice/model/entity/OuterTeam.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/main/java/com/example/playerservice/model/entity/OuterTeam.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/com/example/playerservice/model/entity/PlayerCallUpRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/main/java/com/example/playerservice/model/entity/PlayerCallUpRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/com/example/playerservice/model/entity/PlayerContract.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/main/java/com/example/playerservice/model/entity/PlayerContract.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/com/example/playerservice/model/entity/PlayerStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/main/java/com/example/playerservice/model/entity/PlayerStatus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/com/example/playerservice/model/entity/PlayerTransferIncoming.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/main/java/com/example/playerservice/model/entity/PlayerTransferIncoming.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/com/example/playerservice/model/entity/PlayerTransferOutgoing.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/main/java/com/example/playerservice/model/entity/PlayerTransferOutgoing.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/com/example/playerservice/model/entity/Roster.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/main/java/com/example/playerservice/model/entity/Roster.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/com/example/playerservice/model/entity/Sport.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/main/java/com/example/playerservice/model/entity/Sport.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/com/example/playerservice/model/entity/Team.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/main/java/com/example/playerservice/model/entity/Team.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/com/example/playerservice/model/enums/Position.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/main/java/com/example/playerservice/model/enums/Position.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/com/example/playerservice/model/enums/RequestStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/main/java/com/example/playerservice/model/enums/RequestStatus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/com/example/playerservice/model/enums/StatusOfPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/main/java/com/example/playerservice/model/enums/StatusOfPlayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/test/java/com/example/playerservice/PlayerServiceApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-management-service/src/test/java/com/example/playerservice/PlayerServiceApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/Multi_sport_Club_Management_system/MultiSportClubManagementSystemApplication.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/com/example/Multi_sport_Club_Management_system/MultiSportClubManagementSystemApplicationTests.class" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,30 +118,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Maven.multi-sport-club-management [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.multi-sport-club-management [compile].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;Spring Boot.UserManagementServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;salem&quot;,
-    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;23&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/PC/Desktop/MSCMS/user-management-service/pom.xml&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Maven.multi-sport-club-management [clean].executor": "Run",
+    "Maven.multi-sport-club-management [compile].executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.UserManagementServiceApplication.executor": "Run",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "jdk.selected.JAVA_MODULE": "23",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/PC/Desktop/MSCMS/user-management-service/pom.xml",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.configurations.included.in.services": "true",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.example.playerservice.model.enums" />
@@ -149,6 +168,27 @@
       <option name="filePath" />
       <method v="2" />
     </configuration>
+    <configuration name="ConfigServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="config-server" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="microRealestate.example.config_server.ConfigServerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EurekaServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="eureka-server" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.eureka_server.EurekaServerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="GatewayServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="gateway-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.gateway_service.GatewayServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="MedicalFitnessServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="medical-fitness-service" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.medicalfitnessservice.MedicalFitnessServiceApplication" />
@@ -164,7 +204,7 @@
       </method>
     </configuration>
     <configuration name="PlayerServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <module name="player-service" />
+      <module name="player-management-service" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.playerservice.PlayerServiceApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
