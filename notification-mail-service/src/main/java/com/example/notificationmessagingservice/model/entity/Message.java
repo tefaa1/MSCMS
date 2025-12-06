@@ -1,0 +1,51 @@
+package com.example.notificationmessagingservice.model.entity;
+
+import com.example.notificationmessagingservice.model.enums.MessageStatus;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "messages")
+public class Message {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Long senderUserId;  // Reference to User (Coach, Doctor, etc.)
+    private Long recipientUserId;  // Reference to User
+
+    private String subject;
+    private String content;
+
+    @Enumerated(EnumType.STRING)
+    private MessageStatus status;
+
+    private LocalDateTime sentAt;
+    private LocalDateTime deliveredAt;
+    private LocalDateTime readAt;
+
+    private Long relatedEntityId;  // Optional: related to injury, player, etc.
+    private String relatedEntityType;  // Optional: type of related entity
+
+    private String attachments;  // File references (stored externally)
+
+    @OneToMany(mappedBy = "parentMessage", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Message> replies = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "parent_message_id")
+    private Message parentMessage;  // For message threads
+}
+
