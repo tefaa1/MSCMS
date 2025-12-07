@@ -18,8 +18,6 @@ import lombok.Setter;
 @Table(name = "fitness_coaches")
 public class FitnessCoach extends StaffMember{
 
-    private String certificate;
-
     @Enumerated(EnumType.STRING)
     private StaffRole staffRole = StaffRole.FITNESS_COACH;
 }

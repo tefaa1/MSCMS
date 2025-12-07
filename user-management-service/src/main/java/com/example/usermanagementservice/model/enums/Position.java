@@ -1,6 +1,6 @@
 package com.example.usermanagementservice.model.enums;
 
-public enum Position {
+public enum Position{
     GOALKEEPER,
     RIGHT_BACK,
     LEFT_BACK,

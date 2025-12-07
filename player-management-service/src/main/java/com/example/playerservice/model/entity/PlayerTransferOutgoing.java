@@ -1,6 +1,5 @@
 package com.example.playerservice.model.entity;
 
-import com.example.playerservice.model.embeddable.PlayerRef;
 import com.example.playerservice.model.enums.RequestStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

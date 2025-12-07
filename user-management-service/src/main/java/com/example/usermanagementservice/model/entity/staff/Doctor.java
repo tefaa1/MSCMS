@@ -18,8 +18,6 @@ import lombok.Setter;
 @Table(name = "doctors")
 public class Doctor extends StaffMember{
 
-    private String medicalLicense;
-
     private String specialization;  // orthopedics, general, etc.
 
     @Enumerated(EnumType.STRING)

@@ -32,6 +32,5 @@ public class Team {
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Roster> rosters = new HashSet<>();
 
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PlayerContract> contracts = new HashSet<>();
+
 }

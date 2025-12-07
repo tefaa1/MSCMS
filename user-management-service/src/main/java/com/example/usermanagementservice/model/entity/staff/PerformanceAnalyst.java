@@ -18,6 +18,8 @@ import lombok.Setter;
 @Table(name = "performance_analyst")
 public class PerformanceAnalyst extends StaffMember{
 
+    private int yearsExperience;
+
     private String toolsUsed;    // WyScout, Instat...
 
     @Enumerated(EnumType.STRING)

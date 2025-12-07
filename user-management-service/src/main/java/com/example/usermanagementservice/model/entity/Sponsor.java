@@ -18,10 +18,6 @@ import java.time.LocalDate;
 public class Sponsor extends User {
 
     private String companyName;
-    private String contactPerson;
-    private String email;
-    private LocalDate contractStart;
-    private LocalDate contractEnd;
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.SPONSOR;

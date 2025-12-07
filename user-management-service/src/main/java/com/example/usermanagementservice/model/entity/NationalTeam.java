@@ -20,7 +20,6 @@ public class NationalTeam extends User {
 
     private String federationName;  // اسم الاتحاد الوطني لكرة القدم
     private String contactPerson;   // الشخص المسؤول للتواصل
-    private String email;           // الإيميل الرسمي للتواصل
     private String country;
 
     @Enumerated(EnumType.STRING)

@@ -2,6 +2,7 @@ package com.example.usermanagementservice.model.entity.staff;
 
 import com.example.usermanagementservice.model.entity.TeamManager;
 import com.example.usermanagementservice.model.entity.User;
+import com.example.usermanagementservice.model.enums.Role;
 import com.example.usermanagementservice.model.enums.StaffRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,4 +28,7 @@ public abstract class StaffMember extends User {
     @ManyToOne
     @JoinColumn(name = "team_manager_id")
     private TeamManager teamManager;
+
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.STAFF;
 }

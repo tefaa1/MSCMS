@@ -19,7 +19,6 @@ import lombok.Setter;
 public class Physiotherapist extends StaffMember{
 
     private int yearsExperience;
-    private String certificate;
 
     @Enumerated(EnumType.STRING)
     private StaffRole staffRole = StaffRole.PHYSIOTHERAPIST;

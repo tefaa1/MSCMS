@@ -22,10 +22,6 @@ public class PlayerContract {
 
     private Long playerId;
 
-    @ManyToOne
-    @JoinColumn(name = "team_id")
-    private Team team;
-
     private LocalDate startDate;
     private LocalDate endDate;
     private Long salary;

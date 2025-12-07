@@ -1,4 +1,4 @@
-package com.example.playerservice.model.enums;
+package com.example.usermanagementservice.model.enums;
 
 public enum StatusOfPlayer {
     AVAILABLE,

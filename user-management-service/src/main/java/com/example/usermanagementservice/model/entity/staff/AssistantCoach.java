@@ -19,7 +19,6 @@ import lombok.Setter;
 public class AssistantCoach extends StaffMember{
 
     private String specialty;
-    private boolean canLeadTraining;
 
     @Enumerated(EnumType.STRING)
     private StaffRole staffRole = StaffRole.ASSISTANT_COACH;

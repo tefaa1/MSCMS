@@ -7,5 +7,6 @@ public enum Role {
     NATIONAL_TEAM,
     FAN,
     SPORT_MANGER,
-    TEAM_MANGER
+    TEAM_MANGER,
+    STAFF
 }

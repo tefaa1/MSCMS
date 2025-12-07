@@ -23,6 +23,8 @@ public class Sport {
 
     private String name;
 
+    private Long sportManagerId;
+
     @OneToMany(mappedBy = "sport", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Team> teams = new HashSet<>();
 }

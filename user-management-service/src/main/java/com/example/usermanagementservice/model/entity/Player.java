@@ -2,6 +2,7 @@ package com.example.usermanagementservice.model.entity;
 
 import com.example.usermanagementservice.model.enums.Position;
 import com.example.usermanagementservice.model.enums.Role;
+import com.example.usermanagementservice.model.enums.StatusOfPlayer;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -28,6 +29,13 @@ public class Player extends User {
     private Long marketValue;
     private Integer kitNumber; // from 1 to 99 handle in request dto
 
+    private Long rosterId;
+
+    private Long contractId;
+
     @Enumerated(EnumType.STRING)
     private Role role = Role.PLAYER;
+
+    @Enumerated(EnumType.STRING)
+    private StatusOfPlayer status;
 }

@@ -11,8 +11,8 @@
     <groupId>com.example</groupId>
     <artifactId>notification-mail-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>notification-messaging-service</name>
-    <description>notification-messaging-service</description>
+    <name>notification-mail-service</name>
+    <description>notification-mail-service</description>
     <url/>
     <licenses>
         <license/>

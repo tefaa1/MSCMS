@@ -11,8 +11,8 @@
     <groupId>com.example</groupId>
     <artifactId>player-management-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>player-service</name>
-    <description>squad-service</description>
+    <name>player-management-service</name>
+    <description>player-management-service</description>
     <url/>
     <licenses>
         <license/>
