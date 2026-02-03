@@ -8,9 +8,10 @@ spring:
     gateway:
       mvc:
         routes:
-
-
-
+          - id: user-management-service
+            uri: lb://USER-MANAGEMENT-SERVICE
+            predicates:
+              - Path=/users/**,/team-managers/**,/staff/**,/sport-managers/**,/sponsors/**,/scouts/**,/players/**,/national-teams/**,/fans/**
 
 server:
   port: 8080
