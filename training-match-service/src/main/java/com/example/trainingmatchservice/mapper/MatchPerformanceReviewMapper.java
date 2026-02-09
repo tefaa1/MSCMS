@@ -7,6 +7,7 @@ import com.example.trainingmatchservice.model.match.entity.MatchPerformanceRevie
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
@@ -19,7 +20,7 @@ public interface MatchPerformanceReviewMapper {
     MatchPerformanceReview toEntity(MatchPerformanceReviewRequest request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateFromRequest(MatchPerformanceReviewRequest request, MatchPerformanceReview entity);
+    void updateFromRequest(MatchPerformanceReviewRequest request, @MappingTarget MatchPerformanceReview entity);
 
     default Match mapMatch(Long id) {
         if (id == null) return null;

@@ -9,6 +9,7 @@ import com.example.playerservice.model.entity.Team;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
@@ -25,7 +26,7 @@ public interface PlayerTransferIncomingMapper {
     PlayerTransferIncoming toEntity(PlayerTransferIncomingRequest request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateFromRequest(PlayerTransferIncomingRequest request, PlayerTransferIncoming entity);
+    void updateFromRequest(PlayerTransferIncomingRequest request, @MappingTarget PlayerTransferIncoming entity);
 
     default OuterPlayer mapOuterPlayer(Long id) {
         if (id == null) return null;

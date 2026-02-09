@@ -7,6 +7,7 @@ import com.example.trainingmatchservice.model.training.entity.TrainingSession;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
@@ -19,7 +20,7 @@ public interface TrainingAttendanceMapper {
     TrainingAttendance toEntity(TrainingAttendanceRequest request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateFromRequest(TrainingAttendanceRequest request, TrainingAttendance entity);
+    void updateFromRequest(TrainingAttendanceRequest request, @MappingTarget TrainingAttendance entity);
 
     default TrainingSession mapTrainingSession(Long id) {
         if (id == null) return null;

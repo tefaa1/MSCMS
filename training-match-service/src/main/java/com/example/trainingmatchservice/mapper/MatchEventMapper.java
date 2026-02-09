@@ -7,6 +7,7 @@ import com.example.trainingmatchservice.model.match.entity.MatchEvent;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
@@ -19,7 +20,7 @@ public interface MatchEventMapper {
     MatchEvent toEntity(MatchEventRequest request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateFromRequest(MatchEventRequest request, MatchEvent entity);
+    void updateFromRequest(MatchEventRequest request, @MappingTarget MatchEvent entity);
 
     default Match mapMatch(Long id) {
         if (id == null) return null;

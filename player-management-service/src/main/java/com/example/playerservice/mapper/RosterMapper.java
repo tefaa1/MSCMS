@@ -7,6 +7,7 @@ import com.example.playerservice.model.entity.Team;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
@@ -19,7 +20,7 @@ public interface RosterMapper {
     Roster toEntity(RosterRequest request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateFromRequest(RosterRequest request, Roster entity);
+    void updateFromRequest(RosterRequest request, @MappingTarget Roster entity);
 
     default Team mapTeam(Long id) {
         if (id == null) return null;

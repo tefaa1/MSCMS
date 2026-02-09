@@ -5,6 +5,7 @@ import com.example.medicalfitnessservice.dto.response.InjuryResponse;
 import com.example.medicalfitnessservice.model.entity.Injury;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
@@ -14,6 +15,6 @@ public interface InjuryMapper {
     Injury toEntity(InjuryRequest request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateFromRequest(InjuryRequest request, Injury entity);
+    void updateFromRequest(InjuryRequest request, @MappingTarget Injury entity);
 }
 

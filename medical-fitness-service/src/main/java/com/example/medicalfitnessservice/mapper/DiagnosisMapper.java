@@ -7,6 +7,7 @@ import com.example.medicalfitnessservice.model.entity.Injury;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
@@ -19,7 +20,7 @@ public interface DiagnosisMapper {
     Diagnosis toEntity(DiagnosisRequest request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateFromRequest(DiagnosisRequest request, Diagnosis entity);
+    void updateFromRequest(DiagnosisRequest request, @MappingTarget Diagnosis entity);
 
     default Injury mapInjury(Long id) {
         if (id == null) return null;
