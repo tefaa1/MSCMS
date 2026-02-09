@@ -17,4 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     @Query("SELECT u.role as role, COUNT(u) as count FROM User u GROUP BY u.role")
     List<Object[]> countUsersByRole();
+
+    Optional<User> findByEmail(String adminEmail);
 }
