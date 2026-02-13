@@ -21,7 +21,7 @@ public class PlayerAnalytics {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long playerId;
+    private String playerKeycloakId;
     private Long teamId;
 
     private LocalDate periodStart;

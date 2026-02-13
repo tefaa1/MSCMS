@@ -37,15 +37,15 @@ class PlayerCallUpControllerTest {
     @BeforeEach
     void setUp() {
         request = new PlayerCallUpRequestCreate(
-                10L,
-                100L,
+                "player-keycloak-10",
+                "national-team-keycloak-100",
                 LocalDate.now()
         );
 
         response = PlayerCallUpResponse.builder()
                 .id(1L)
-                .playerId(10L)
-                .nationalTeamId(100L)
+                .playerKeycloakId("player-keycloak-10")
+                .nationalTeamKeycloakId("national-team-keycloak-100")
                 .status(RequestStatus.PENDING)
                 .requestDate(LocalDate.now())
                 .build();

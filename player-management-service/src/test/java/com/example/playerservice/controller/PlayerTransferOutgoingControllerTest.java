@@ -37,7 +37,7 @@ class PlayerTransferOutgoingControllerTest {
     @BeforeEach
     void setUp() {
         request = new PlayerTransferOutgoingRequest(
-                10L,
+                "player-keycloak-10",
                 20L,
                 30L,
                 LocalDate.now()
@@ -45,7 +45,7 @@ class PlayerTransferOutgoingControllerTest {
 
         response = PlayerTransferOutgoingResponse.builder()
                 .id(1L)
-                .playerId(10L)
+                .playerKeycloakId("player-keycloak-10")
                 .fromTeamId(20L)
                 .toOuterTeamId(30L)
                 .status(RequestStatus.PENDING)

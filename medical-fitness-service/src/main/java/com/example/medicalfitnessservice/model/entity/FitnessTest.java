@@ -21,14 +21,18 @@ public class FitnessTest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long playerId;
+    @Column(name = "player_keycloak_id")
+    private String playerKeycloakId;
+
     private Long teamId;
 
     @Enumerated(EnumType.STRING)
     private FitnessTestType testType;
 
     private LocalDateTime testDate;
-    private Long conductedByDoctorId;  // Reference to Doctor/Fitness Coach
+
+    @Column(name = "conducted_by_doctor_keycloak_id")
+    private String conductedByDoctorKeycloakId;  // Reference to Doctor/Fitness Coach
 
     private String testName;  // Specific test name
     private Double result;  // Test result value

@@ -14,7 +14,6 @@ import com.example.usermanagementservice.repository.UserRepository;
 import com.example.usermanagementservice.service.keycloakAdmin.KeycloakAdminService;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -125,38 +124,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserResponse> searchUsers(UserSearchCriteria criteria) {
         log.debug("Searching users with criteria: {}", criteria);
-        Specification<User> spec = Specification.where((Specification<User>) null);
-
-        if (criteria.getFirstName() != null) {
-            spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("firstName")), "%" + criteria.getFirstName().toLowerCase() + "%"));
-        }
-        if (criteria.getLastName() != null) {
-            spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("lastName")), "%" + criteria.getLastName().toLowerCase() + "%"));
-        }
-        if (criteria.getEmail() != null) {
-            spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("email")), "%" + criteria.getEmail().toLowerCase() + "%"));
-        }
-        if (criteria.getGender() != null) {
-            spec = spec.and((root, query, cb) ->
-                    cb.equal(root.get("gender"), criteria.getGender()));
-        }
-        if (criteria.getRole() != null) {
-            spec = spec.and((root, query, cb) ->
-                    cb.equal(root.get("role"), criteria.getRole()));
-        }
-        if (criteria.getMinAge() != null) {
-            spec = spec.and((root, query, cb) ->
-                    cb.greaterThanOrEqualTo(root.get("age"), criteria.getMinAge()));
-        }
-        if (criteria.getMaxAge() != null) {
-            spec = spec.and((root, query, cb) ->
-                    cb.lessThanOrEqualTo(root.get("age"), criteria.getMaxAge()));
-        }
-
-        List<User> users = userRepository.findAll(spec);
+        List<User> users = userRepository.searchUsers(
+                criteria.getFirstName(),
+                criteria.getLastName(),
+                criteria.getEmail(),
+                criteria.getGender(),
+                criteria.getRole(),
+                criteria.getMinAge(),
+                criteria.getMaxAge()
+        );
         return userMapper.toResponseList(users);
     }
 

@@ -13,8 +13,7 @@ public record MatchFormationRequest(
         Long teamId,
 
         @NotNull(groups = Create.class)
-        @Positive(groups = {Create.class, Update.class})
-        Long setByCoachId,
+        String setByCoachKeycloakId,
 
         @NotBlank(groups = Create.class)
         @Size(min = 2, groups = {Create.class, Update.class})

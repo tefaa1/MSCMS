@@ -15,8 +15,7 @@ public record MatchEventRequest(
         Long matchId,
 
         @NotNull(groups = Create.class)
-        @Positive(groups = {Create.class, Update.class})
-        Long playerId,
+        String playerKeycloakId,
 
         @NotNull(groups = Create.class)
         @Positive(groups = {Create.class, Update.class})

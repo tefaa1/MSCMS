@@ -37,11 +37,11 @@ class FitnessTestControllerTest {
     @BeforeEach
     void setUp() {
         request = new FitnessTestRequest(
-                1L,
+                "player-keycloak-id-1",
                 2L,
                 FitnessTestType.SPEED_TEST,
                 LocalDateTime.now(),
-                10L,
+                "doctor-keycloak-id-1",
                 "Sprint 30m",
                 4.5,
                 "s",
@@ -53,11 +53,11 @@ class FitnessTestControllerTest {
 
         response = new FitnessTestResponse(
                 1L,
-                request.playerId(),
+                request.playerKeycloakId(),
                 request.teamId(),
                 request.testType(),
                 request.testDate(),
-                request.conductedByDoctorId(),
+                request.conductedByDoctorKeycloakId(),
                 request.testName(),
                 request.result(),
                 request.unit(),

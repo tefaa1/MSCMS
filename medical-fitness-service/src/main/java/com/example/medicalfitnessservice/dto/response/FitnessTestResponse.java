@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
 
 public record FitnessTestResponse(
         Long id,
-        Long playerId,
+        String playerKeycloakId,
         Long teamId,
         FitnessTestType testType,
         LocalDateTime testDate,
-        Long conductedByDoctorId,
+        String conductedByDoctorKeycloakId,
         String testName,
         Double result,
         String unit,

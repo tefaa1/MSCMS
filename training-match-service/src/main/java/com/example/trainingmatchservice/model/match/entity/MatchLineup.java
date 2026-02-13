@@ -22,7 +22,9 @@ public class MatchLineup {
 
 
     private Long teamId;
-    private Long playerId;
+
+    @Column(name = "player_keycloak_id")
+    private String playerKeycloakId;
 
     @ManyToOne
     @JoinColumn(name = "match_formation_id")

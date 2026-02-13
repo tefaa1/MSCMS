@@ -3,15 +3,13 @@ package com.example.notificationmessagingservice.model.entity;
 import com.example.notificationmessagingservice.model.enums.AlertPriority;
 import com.example.notificationmessagingservice.model.enums.AlertType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -32,7 +30,7 @@ public class Alert {
     private String message;
     private String description;
 
-    private Long targetUserId;  // Who should receive this alert (optional - can be role-based)
+    private String targetUserKeycloakId;  // Who should receive this alert (Keycloak ID, optional - can be role-based)
     private String targetRole;  // Role that should receive this alert (e.g., "COACH", "DOCTOR")
 
     private Long relatedEntityId;  // ID of related entity (injury, player, report, etc.)
@@ -40,7 +38,7 @@ public class Alert {
 
     private LocalDateTime triggeredAt;
     private LocalDateTime acknowledgedAt;
-    private Long acknowledgedByUserId;  // Who acknowledged the alert
+    private String acknowledgedByUserKeycloakId;  // Who acknowledged the alert (Keycloak ID)
 
     private Boolean isAcknowledged;
     private Boolean isResolved;

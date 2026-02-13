@@ -36,7 +36,7 @@ class PlayerContractControllerTest {
     @BeforeEach
     void setUp() {
         request = new PlayerContractRequest(
-                10L,
+                "player-keycloak-10",
                 LocalDate.now(),
                 LocalDate.now().plusYears(3),
                 100_000L,
@@ -45,7 +45,7 @@ class PlayerContractControllerTest {
 
         response = PlayerContractResponse.builder()
                 .id(1L)
-                .playerId(10L)
+                .playerKeycloakId("player-keycloak-10")
                 .startDate(request.startDate())
                 .endDate(request.endDate())
                 .salary(request.salary())

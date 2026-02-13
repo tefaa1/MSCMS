@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 public record DiagnosisResponse(
         Long id,
         Long injuryId,
-        Long playerId,
-        Long doctorId,
+        String playerKeycloakId,
+        String doctorKeycloakId,
         String diagnosis,
         String medicalNotes,
         String recommendations,

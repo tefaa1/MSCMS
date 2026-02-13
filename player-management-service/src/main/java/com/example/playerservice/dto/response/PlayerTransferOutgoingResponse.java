@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Builder
 public class PlayerTransferOutgoingResponse {
     private Long id;
-    private Long playerId;
+    private String playerKeycloakId;
     private Long fromTeamId;
     private Long toOuterTeamId;
     private RequestStatus status;

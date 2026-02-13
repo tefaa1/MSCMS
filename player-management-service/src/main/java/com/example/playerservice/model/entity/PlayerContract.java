@@ -20,7 +20,8 @@ public class PlayerContract {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long playerId;
+    @Column(name = "player_keycloak_id")
+    private String playerKeycloakId;
 
     private LocalDate startDate;
     private LocalDate endDate;

@@ -5,7 +5,7 @@ import com.example.trainingmatchservice.model.match.enums.EventType;
 public record MatchEventResponse(
         Long id,
         Long matchId,
-        Long playerId,
+        String playerKeycloakId,
         Long teamId,
         EventType eventType,
         Integer minute,

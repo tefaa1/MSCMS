@@ -25,7 +25,9 @@ public class MatchFormation {
     private Set<Match>matches = new HashSet<>();
 
     private Long teamId;
-    private Long setByCoachId;
+
+    @Column(name = "set_by_coach_keycloak_id")
+    private String setByCoachKeycloakId;
 
     private String formation;  // e.g., "4-3-3", "4-4-2"
     private String tacticalApproach;  // e.g., "High Press", "Counter Attack"

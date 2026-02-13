@@ -23,8 +23,8 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long senderUserId;  // Reference to User (Coach, Doctor, etc.)
-    private Long recipientUserId;  // Reference to User
+    private String senderUserKeycloakId;  // Reference to User (Keycloak ID - Coach, Doctor, etc.)
+    private String recipientUserKeycloakId;  // Reference to User (Keycloak ID)
 
     private String subject;
     private String content;

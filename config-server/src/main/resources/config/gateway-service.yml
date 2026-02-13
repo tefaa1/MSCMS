@@ -12,6 +12,26 @@ spring:
             uri: lb://USER-MANAGEMENT-SERVICE
             predicates:
               - Path=/users/**,/team-managers/**,/staff/**,/sport-managers/**,/sponsors/**,/scouts/**,/players/**,/national-teams/**,/fans/**
+          - id: player-management-service
+            uri: lb://PLAYER-MANAGEMENT-SERVICE
+            predicates:
+              - Path=/teams/**,/sports/**,/rosters/**,/outer-players/**,/outer-teams/**,/player-contracts/**,/player-transfers-incoming/**,/player-transfers-outgoing/**,/player-callups/**
+          - id: training-match-service
+            uri: lb://TRAINING-MATCH-SERVICE
+            predicates:
+              - Path=/matches/**,/match-events/**,/match-formations/**,/match-lineups/**,/match-performance-reviews/**,/player-match-statistics/**,/training-sessions/**,/training-plans/**,/training-drills/**,/training-attendance/**,/player-training-assessments/**
+          - id: medical-fitness-service
+            uri: lb://MEDICAL-FITNESS-SERVICE
+            predicates:
+              - Path=/injuries/**,/diagnoses/**,/treatments/**,/rehabilitations/**,/fitness-tests/**,/training-loads/**,/recovery-programs/**
+          - id: notification-mail-service
+            uri: lb://NOTIFICATION-MAIL-SERVICE
+            predicates:
+              - Path=/notifications/**,/alerts/**,/messages/**
+          - id: reports-analytics-service
+            uri: lb://REPORTS-ANALYTICS-SERVICE
+            predicates:
+              - Path=/match-analyses/**,/player-analytics/**,/scout-reports/**,/sponsor-offers/**,/team-analytics/**,/training-analytics/**
 
 server:
   port: 8080

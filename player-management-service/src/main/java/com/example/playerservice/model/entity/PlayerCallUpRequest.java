@@ -21,9 +21,11 @@ public class PlayerCallUpRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long playerId;
+    @Column(name = "player_keycloak_id")
+    private String playerKeycloakId;
 
-    private Long nationalTeamId;
+    @Column(name = "national_team_keycloak_id")
+    private String nationalTeamKeycloakId;
 
     @Enumerated(EnumType.STRING)
     private RequestStatus status;

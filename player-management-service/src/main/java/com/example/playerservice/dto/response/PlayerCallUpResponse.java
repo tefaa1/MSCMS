@@ -14,8 +14,8 @@ import java.time.LocalDate;
 @Builder
 public class PlayerCallUpResponse {
     private Long id;
-    private Long playerId;
-    private Long nationalTeamId;
+    private String playerKeycloakId;
+    private String nationalTeamKeycloakId;
     private RequestStatus status;
     private LocalDate requestDate;
 }

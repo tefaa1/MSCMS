@@ -11,9 +11,8 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 public record FitnessTestRequest(
-        @NotNull(groups = Create.class)
-        @Positive(groups = {Create.class, Update.class})
-        Long playerId,
+        @NotBlank(groups = Create.class)
+        String playerKeycloakId,
 
         @NotNull(groups = Create.class)
         @Positive(groups = {Create.class, Update.class})
@@ -25,9 +24,8 @@ public record FitnessTestRequest(
         @NotNull(groups = Create.class)
         LocalDateTime testDate,
 
-        @NotNull(groups = Create.class)
-        @Positive(groups = {Create.class, Update.class})
-        Long conductedByDoctorId,
+        @NotBlank(groups = Create.class)
+        String conductedByDoctorKeycloakId,
 
         @NotBlank(groups = Create.class)
         @Size(min = 2, groups = {Create.class, Update.class})
@@ -57,6 +55,8 @@ public record FitnessTestRequest(
         String attachments
 ) {
     public FitnessTestRequest {
+        playerKeycloakId = playerKeycloakId != null ? playerKeycloakId.trim() : null;
+        conductedByDoctorKeycloakId = conductedByDoctorKeycloakId != null ? conductedByDoctorKeycloakId.trim() : null;
         testName = testName != null ? testName.trim() : null;
         unit = unit != null ? unit.trim() : null;
         resultCategory = resultCategory != null ? resultCategory.trim() : null;

@@ -23,7 +23,8 @@ public class MatchEvent {
     @JoinColumn(name = "match_id")
     private Match match;
 
-    private Long playerId;
+    @Column(name = "player_keycloak_id")
+    private String playerKeycloakId;
     private Long teamId;
 
     @Enumerated(EnumType.STRING)

@@ -24,8 +24,11 @@ public class Diagnosis {
     @JoinColumn(name = "injury_id")
     private Injury injury;
 
-    private Long playerId;
-    private Long doctorId;  // Reference to Doctor
+    @Column(name = "player_keycloak_id")
+    private String playerKeycloakId;
+
+    @Column(name = "doctor_keycloak_id")
+    private String doctorKeycloakId;  // Reference to Doctor
 
     private String diagnosis;  // Medical diagnosis description
     private String medicalNotes;

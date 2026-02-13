@@ -4,15 +4,13 @@ import com.example.notificationmessagingservice.model.enums.NotificationCategory
 import com.example.notificationmessagingservice.model.enums.NotificationStatus;
 import com.example.notificationmessagingservice.model.enums.NotificationType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -23,7 +21,7 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long recipientUserId;  // Reference to User
+    private String recipientUserKeycloakId;  // Reference to User (Keycloak ID)
 
     @Enumerated(EnumType.STRING)
     private NotificationType notificationType;

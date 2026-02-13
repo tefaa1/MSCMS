@@ -21,7 +21,7 @@ public class ScoutReport {
     private Long id;
 
     // The scout who created the report
-    private Long scoutId;   // reference to Scout user
+    private String scoutKeycloakId;   // reference to Scout user
 
     // Outer player (not in the club database)
     private Long outerPlayerId;   // optional if you want separate entity

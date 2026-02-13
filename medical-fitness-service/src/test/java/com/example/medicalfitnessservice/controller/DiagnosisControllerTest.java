@@ -37,8 +37,8 @@ class DiagnosisControllerTest {
     void setUp() {
         request = new DiagnosisRequest(
                 1L,
-                1L,
-                10L,
+                "player-keycloak-id-1",
+                "doctor-keycloak-id-1",
                 "Diagnosis",
                 "Notes",
                 "Recommendations",
@@ -50,8 +50,8 @@ class DiagnosisControllerTest {
         response = new DiagnosisResponse(
                 1L,
                 request.injuryId(),
-                request.playerId(),
-                request.doctorId(),
+                request.playerKeycloakId(),
+                request.doctorKeycloakId(),
                 request.diagnosis(),
                 request.medicalNotes(),
                 request.recommendations(),

@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Builder
 public class PlayerContractResponse {
     private Long id;
-    private Long playerId;
+    private String playerKeycloakId;
     private LocalDate startDate;
     private LocalDate endDate;
     private Long salary;

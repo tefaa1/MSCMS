@@ -22,7 +22,7 @@ public class TrainingAnalytics {
     private Long id;
 
     private Long teamId;
-    private Long playerId;   // nullable → لو عايز analytics للفريق كله
+    private String playerKeycloakId;   // nullable - for team-wide analytics when null
 
     private LocalDate periodStart;
     private LocalDate periodEnd;

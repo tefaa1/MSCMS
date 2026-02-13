@@ -41,7 +41,7 @@ public class MatchAnalysis {
     private String tacticalAnalysis;  // Tactical insights
     private String playerRatings;  // JSON string for player ratings
 
-    private Long analyzedByUserId;  // Reference to Performance Analyst or Coach
+    private String analyzedByUserKeycloakId;  // Reference to Performance Analyst or Coach
     private LocalDateTime analyzedAt;
 
     private String notes;
