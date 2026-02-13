@@ -37,7 +37,7 @@ class MatchEventControllerTest {
     void setUp() {
         request = new MatchEventRequest(
                 1L,
-                1L,
+                "player-keycloak-id-1",
                 1L,
                 EventType.GOAL,
                 10,
@@ -47,7 +47,7 @@ class MatchEventControllerTest {
         response = new MatchEventResponse(
                 1L,
                 1L,
-                1L,
+                "player-keycloak-id-1",
                 1L,
                 EventType.GOAL,
                 10,

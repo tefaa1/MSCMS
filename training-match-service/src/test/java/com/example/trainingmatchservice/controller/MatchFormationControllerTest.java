@@ -36,7 +36,7 @@ class MatchFormationControllerTest {
     void setUp() {
         request = new MatchFormationRequest(
                 1L,
-                1L,
+                "coach-keycloak-id-1",
                 "4-4-2",
                 "Attacking",
                 "Details");
@@ -44,7 +44,7 @@ class MatchFormationControllerTest {
         response = new MatchFormationResponse(
                 1L,
                 1L,
-                1L,
+                "coach-keycloak-id-1",
                 "4-4-2",
                 "Attacking",
                 "Details");

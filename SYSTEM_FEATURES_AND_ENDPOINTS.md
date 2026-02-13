@@ -1,591 +1,780 @@
 # Multi-Sport Club Management System - Features & Endpoints Documentation
 
-This document describes all the features and endpoints that will be available in the system. It is designed to help UI/UX designers understand the complete functionality of the application.
+This document describes all the features and API endpoints available in the system. It is designed to help frontend developers and UI/UX designers understand the complete functionality of the application.
 
 ---
 
-## 1. User Management & Authentication
+## Architecture Overview
 
-### 1.1 User Registration & Profile Management
-**Description:** Users can register and manage their profiles. All new registrations default to Fan role. Only Admin can change user roles and assign permissions.
+The system is built as a **microservices architecture** with the following services:
 
-**Features:**
-- **User Registration** - Create new user account (automatically assigned Fan role - public role)
-- **Profile View** - View complete user profile including personal information, role-specific details
-- **Profile Update** - Edit personal information (name, email, phone, address, age, gender)
-- **Role-Specific Profile Management:**
-  - **Player Profile:** Date of birth, nationality, preferred position, market value, kit number
-  - **Staff Profile:** Sport assignment, team assignment, staff role (Head Coach, Assistant Coach, Fitness Coach, Doctor, Physiotherapist, Performance Analyst)
-  - **Team Manager Profile:** Team assignments, management permissions
-  - **Sport Manager Profile:** Sport management, team oversight permissions
-  - **Scout Profile:** Region, organization name
-  - **Fan Profile:** Display name, favorite team (default role for all new registrations)
-  - **Sponsor Profile:** Sponsorship details
+| Service | Port | Base Path (via Gateway) | Description |
+|---------|------|------------------------|-------------|
+| **Gateway Service** | 8080 | `/` | API Gateway - all requests go through here |
+| **Eureka Server** | 8761 | - | Service Discovery |
+| **Config Server** | 8888 | - | Centralized Configuration |
+| **User Management Service** | 8081 | `/api/user-management/**` | Users, Teams, Sports, Auth |
+| **Player Management Service** | 8082 | `/api/player-management/**` | Players, Contracts, Transfers, Rosters |
+| **Training & Match Service** | 8083 | `/api/training-match/**` | Training, Matches, Stats |
+| **Medical & Fitness Service** | 8084 | `/api/medical-fitness/**` | Injuries, Treatments, Fitness |
+| **Reports & Analytics Service** | 8085 | `/api/reports-analytics/**` | Reports, Analytics, Scouting |
+| **Notification & Mail Service** | 8086 | `/api/notification-mail/**` | Notifications, Alerts, Messages, Email |
 
-**User Roles:**
-- Admin (System Administrator - can manage all users and roles)
-- Player
-- Head Coach
-- Assistant Coach
-- Fitness Coach
-- Specific Coach
-- Doctor
-- Physiotherapist
-- Performance Analyst
-- Team Manager
-- Sport Manager
-- Scout
-- Fan (Default role for all new registrations)
-- Sponsor
+### Authentication & Authorization
+- **Keycloak** is the identity provider (realm: `mscms`)
+- All API calls require a **JWT Bearer token** in the `Authorization` header
+- Users are identified across services by their **Keycloak ID** (`keycloakId`) - a UUID string from the JWT `sub` claim
+- Role-based access control via `@PreAuthorize` annotations on every endpoint
+- The frontend must send the JWT token with every request to the Gateway
 
-**Important Notes:**
-- All new user registrations automatically receive the **Fan** role (public role)
-- Only **Admin** users can change user roles and assign permissions
-- Role changes require admin approval and authority assignment
+### Important: User Identity (keycloakId)
+All user references across the system use `String keycloakId` (the Keycloak UUID) instead of internal database IDs. This means:
+- When creating a player contract, you send `playerKeycloakId: "abc-123-def"` (not a numeric ID)
+- When reporting an injury, you send `playerKeycloakId` and `doctorKeycloakId` as strings
+- The frontend gets the current user's keycloakId from the decoded JWT token's `sub` claim
 
-### 1.2 Team Management
-**Description:** Manage teams within the club system.
-
-**Features:**
-- **Create Team** - Add new team with name, country, sport assignment
-- **View Teams** - List all teams with filters by sport
-- **Team Details** - View team information, assigned players, staff members
-- **Update Team** - Edit team information
-- **Delete Team** - Remove team from system
-
-### 1.3 Sport Management
-**Description:** Manage different sports in the multi-sport club.
-
-**Features:**
-- **Create Sport** - Add new sport type
-- **View Sports** - List all available sports
-- **Sport Details** - View sport information and associated teams
-- **Update Sport** - Edit sport details
-
-### 1.4 National Team Management
-**Description:** Manage national team information and call-up requests.
-
-**Features:**
-- **Create National Team** - Add national team information
-- **View National Teams** - List all national teams
-- **National Team Details** - View team information
-
-### 1.5 Admin - User Role Management
-**Description:** Admin-only feature to manage user roles and permissions.
-
-**Features:**
-- **View All Users** - List all users in the system with their current roles
-- **Change User Role** - Admin can change any user's role (from Fan to Player, Coach, Doctor, etc.)
-- **Assign Permissions** - Admin assigns appropriate permissions based on role
-- **View Role History** - View history of role changes for a user
-- **User Authority Management** - Grant or revoke specific authorities/permissions
-- **Bulk Role Assignment** - Assign roles to multiple users at once
-- **Role Change Approval** - Admin approval required for role changes (only admin can approve)
-
-**Admin Capabilities:**
-- Full access to all system features
-- Can change any user's role
-- Can assign/revoke permissions
-- Can manage all teams, sports, and entities
-- Can view all reports and analytics
-- Can manage system settings
+### Real-Time Events (Kafka)
+The system uses **Kafka event-driven architecture** for real-time notifications:
+- When key actions happen (injury reported, match scheduled, transfer completed, etc.), events are published
+- The **Notification & Mail Service** consumes these events and automatically creates notifications/sends emails
+- The frontend should poll or use WebSocket for real-time notification updates
 
 ---
 
-## 2. Player Management
+## 1. User Management Service
 
-### 2.1 Player Status Management
-**Description:** Track and manage player availability status.
+**Gateway Base URL:** `http://localhost:8080/api/user-management`
 
-**Features:**
-- **View Player Status** - Check current status of players (Available, Injured, Absent, Suspended)
-- **Update Player Status** - Change player status
-- **Status History** - View status change history for a player
-- **Filter by Status** - Filter players by their current status
+### 1.1 User Endpoints (`/users`)
 
-### 2.2 Player Contracts
-**Description:** Manage player contracts and contract details.
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/users` | ADMIN | Create a new user |
+| PUT | `/users/{id}` | ADMIN | Update user by ID |
+| GET | `/users/{id}` | ADMIN | Get user by ID |
+| GET | `/users` | ADMIN | Get all users |
+| DELETE | `/users/{id}` | ADMIN | Delete user by ID |
+| GET | `/users/search` | ADMIN | Search users with filters |
+| GET | `/users/keycloak/{keycloakId}` | ALL AUTHENTICATED | Get user by Keycloak ID |
 
-**Features:**
-- **Create Contract** - Add new player contract with start date, end date, salary, contract terms
-- **View Contracts** - List all player contracts with filters
-- **Contract Details** - View complete contract information
-- **Update Contract** - Modify contract details
-- **Contract Expiry Alerts** - View contracts expiring soon
-- **Contract History** - View all contracts for a specific player
+**Search Parameters** (all optional query params):
+- `firstName` - partial match (case-insensitive)
+- `lastName` - partial match (case-insensitive)
+- `email` - partial match (case-insensitive)
+- `gender` - exact match (enum: `MALE`, `FEMALE`)
+- `role` - exact match (enum: see User Roles below)
+- `minAge` / `maxAge` - age range filter
 
-### 2.3 Player Transfers
-**Description:** Manage incoming and outgoing player transfers.
+### 1.2 Player Profile Endpoints (`/players`)
 
-**Features:**
-- **Incoming Transfers:**
-  - Create incoming transfer request
-  - View pending incoming transfers
-  - Approve/reject transfer
-  - Complete transfer process
-  - View transfer history
-- **Outgoing Transfers:**
-  - Create outgoing transfer request
-  - View pending outgoing transfers
-  - Approve/reject transfer
-  - Complete transfer process
-  - View transfer history
-- **Transfer Details** - View complete transfer information including fees, dates, terms
-- **Filter Transfers** - Filter by status, date range, player
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/players` | ADMIN | Create player profile |
+| PUT | `/players/{id}` | ADMIN | Update player profile |
+| GET | `/players/{id}` | ADMIN, TEAM_MANAGER, HEAD_COACH, SPORT_MANAGER | Get player by ID |
+| GET | `/players` | ADMIN, TEAM_MANAGER, HEAD_COACH, SPORT_MANAGER | Get all players |
+| DELETE | `/players/{id}` | ADMIN | Delete player profile |
 
-### 2.4 Rosters Management
-**Description:** Manage team rosters for different seasons.
+**Player Fields:** dateOfBirth, nationality, preferredPosition, marketValue, kitNumber, playerStatus
 
-**Features:**
-- **Create Roster** - Add players to team roster for a specific season
-- **View Rosters** - List all rosters with filters by team, season
-- **Roster Details** - View all players in a roster
-- **Update Roster** - Add/remove players from roster
-- **Season Management** - Manage rosters for different seasons
+### 1.3 Staff Endpoints (`/staff`)
 
-### 2.5 National Team Call-Up Requests
-**Description:** Handle requests for players to join national teams.
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/staff` | ADMIN | Create staff member |
+| PUT | `/staff/{id}` | ADMIN | Update staff member |
+| GET | `/staff/{id}` | ADMIN, TEAM_MANAGER, SPORT_MANAGER | Get staff by ID |
+| GET | `/staff` | ADMIN, TEAM_MANAGER, SPORT_MANAGER | Get all staff |
+| DELETE | `/staff/{id}` | ADMIN | Delete staff member |
 
-**Features:**
-- **Create Call-Up Request** - Submit request for player to join national team
-- **View Requests** - List all call-up requests with status (Pending, Approved, Rejected)
-- **Request Details** - View complete request information
-- **Approve/Reject Request** - Process call-up requests
-- **Request History** - View all call-up requests for a player
+**Staff Roles:** HEAD_COACH, ASSISTANT_COACH, FITNESS_COACH, DOCTOR, PHYSIOTHERAPIST, PERFORMANCE_ANALYST
 
-### 2.6 Outer Players & Teams
-**Description:** Manage information about players and teams from other clubs.
+### 1.4 Team Manager Endpoints (`/team-managers`)
 
-**Features:**
-- **Add Outer Player** - Register player from another club
-- **View Outer Players** - List all outer players
-- **Outer Player Details** - View player information
-- **Add Outer Team** - Register team from another club
-- **View Outer Teams** - List all outer teams
-- **Outer Team Details** - View team information
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/team-managers` | ADMIN | Create team manager |
+| PUT | `/team-managers/{id}` | ADMIN | Update team manager |
+| GET | `/team-managers/{id}` | ADMIN, SPORT_MANAGER | Get team manager by ID |
+| GET | `/team-managers` | ADMIN, SPORT_MANAGER | Get all team managers |
+| DELETE | `/team-managers/{id}` | ADMIN | Delete team manager |
 
----
+### 1.5 Sport Manager Endpoints (`/sport-managers`)
 
-## 3. Training Management
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/sport-managers` | ADMIN | Create sport manager |
+| PUT | `/sport-managers/{id}` | ADMIN | Update sport manager |
+| GET | `/sport-managers/{id}` | ADMIN | Get sport manager by ID |
+| GET | `/sport-managers` | ADMIN | Get all sport managers |
+| DELETE | `/sport-managers/{id}` | ADMIN | Delete sport manager |
 
-### 3.1 Training Sessions
-**Description:** Schedule and manage training sessions for teams.
+### 1.6 Scout Endpoints (`/scouts`)
 
-**Features:**
-- **Create Training Session** - Schedule new training with date, time, location, duration, type, objectives
-- **View Training Sessions** - List all training sessions with filters by team, date, status, type
-- **Training Details** - View complete training information including attendance, drills, assessments
-- **Update Training** - Modify training details (can edit if not started)
-- **Cancel Training** - Cancel scheduled training session
-- **Training Calendar** - View training schedule in calendar format
-- **Training Types:** Technical, Tactical, Physical, Goalkeeper, Recovery, Match Preparation
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/scouts` | ADMIN | Create scout |
+| PUT | `/scouts/{id}` | ADMIN | Update scout |
+| GET | `/scouts/{id}` | ADMIN, SPORT_MANAGER | Get scout by ID |
+| GET | `/scouts` | ADMIN, SPORT_MANAGER | Get all scouts |
+| DELETE | `/scouts/{id}` | ADMIN | Delete scout |
 
-### 3.2 Training Plans
-**Description:** Create and manage long-term training plans.
+**Scout Fields:** region, organizationName
 
-**Features:**
-- **Create Training Plan** - Create training plan with title, description, goals, focus, start/end dates
-- **View Training Plans** - List all training plans with filters by team, status, date range
-- **Plan Details** - View plan information and associated training sessions
-- **Update Plan** - Modify plan details
-- **Activate/Deactivate Plan** - Change plan status
-- **Plan Progress** - View progress of training plan execution
+### 1.7 Fan Endpoints (`/fans`)
 
-### 3.3 Training Attendance
-**Description:** Track player attendance in training sessions.
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/fans` | PUBLIC | Create fan (default role on registration) |
+| PUT | `/fans/{id}` | ADMIN | Update fan |
+| GET | `/fans/{id}` | ADMIN | Get fan by ID |
+| GET | `/fans` | ADMIN | Get all fans |
+| DELETE | `/fans/{id}` | ADMIN | Delete fan |
 
-**Features:**
-- **Mark Attendance** - Record player attendance (Present, Absent, Late, Excused)
-- **View Attendance** - List attendance records with filters by player, training, date
-- **Attendance Statistics** - View attendance rates for players/teams
-- **Absence Reasons** - Record and view reasons for absences
-- **Attendance Reports** - Generate attendance reports
+**Fan Fields:** displayName, favoriteTeam
 
-### 3.4 Training Drills
-**Description:** Manage drills performed during training sessions.
+### 1.8 Sponsor Endpoints (`/sponsors`)
 
-**Features:**
-- **Add Drill** - Add drill to training session with name, category, duration, description
-- **View Drills** - List drills for a training session
-- **Drill Categories:** Warm-up, Technical, Tactical, Physical, Cool-down
-- **Drill Details** - View drill information and performance
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/sponsors` | ADMIN | Create sponsor |
+| PUT | `/sponsors/{id}` | ADMIN | Update sponsor |
+| GET | `/sponsors/{id}` | ADMIN, SPORT_MANAGER | Get sponsor by ID |
+| GET | `/sponsors` | ADMIN, SPORT_MANAGER | Get all sponsors |
+| DELETE | `/sponsors/{id}` | ADMIN | Delete sponsor |
 
-### 3.5 Player Training Assessments
-**Description:** Assess player performance during training sessions.
+### 1.9 Team Endpoints (`/teams`)
 
-**Features:**
-- **Create Assessment** - Assess player performance in training with rating, condition, notes
-- **View Assessments** - List all assessments with filters by player, training, date
-- **Assessment Details** - View complete assessment information
-- **Player Condition:** Excellent, Good, Average, Poor, Needs Rest
-- **Assessment History** - View training assessment history for a player
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/teams` | ADMIN, SPORT_MANAGER | Create team |
+| PUT | `/teams/{id}` | ADMIN, SPORT_MANAGER | Update team |
+| GET | `/teams/{id}` | ALL AUTHENTICATED | Get team by ID |
+| GET | `/teams` | ALL AUTHENTICATED | Get all teams |
+| DELETE | `/teams/{id}` | ADMIN | Delete team |
 
----
+**Team Fields:** name, country, sportId
 
-## 4. Match Management
+### 1.10 Sport Endpoints (`/sports`)
 
-### 4.1 Match Management
-**Description:** Create and manage match information.
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/sports` | ADMIN | Create sport |
+| PUT | `/sports/{id}` | ADMIN | Update sport |
+| GET | `/sports/{id}` | ALL AUTHENTICATED | Get sport by ID |
+| GET | `/sports` | ALL AUTHENTICATED | Get all sports |
+| DELETE | `/sports/{id}` | ADMIN | Delete sport |
 
-**Features:**
-- **Create Match** - Schedule new match with teams, date, time, venue, competition, season, match type
-- **View Matches** - List all matches with filters by team, date, status, competition, season
-- **Match Details** - View complete match information including score, events, statistics, lineup
-- **Update Match** - Modify match details (before match starts)
-- **Match Calendar** - View match schedule in calendar format
-- **Match Types:** Friendly, League, Cup, Tournament, Pre-season
-- **Match Status:** Scheduled, Live, Finished, Cancelled, Postponed
+### 1.11 National Team Endpoints (`/national-teams`)
 
-### 4.2 Match Events
-**Description:** Record events that occur during a match.
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/national-teams` | ADMIN, SPORT_MANAGER | Create national team |
+| PUT | `/national-teams/{id}` | ADMIN, SPORT_MANAGER | Update national team |
+| GET | `/national-teams/{id}` | ALL AUTHENTICATED | Get national team by ID |
+| GET | `/national-teams` | ALL AUTHENTICATED | Get all national teams |
+| DELETE | `/national-teams/{id}` | ADMIN | Delete national team |
 
-**Features:**
-- **Add Match Event** - Record event (Goal, Assist, Yellow Card, Red Card, Substitution, Injury) with minute, player, description
-- **View Events** - List all events for a match in chronological order
-- **Event Timeline** - View match events in timeline format
-- **Event Details** - View complete event information
+**User Roles (enum):**
+`ADMIN`, `PLAYER`, `HEAD_COACH`, `ASSISTANT_COACH`, `FITNESS_COACH`, `SPECIFIC_COACH`, `DOCTOR`, `PHYSIOTHERAPIST`, `PERFORMANCE_ANALYST`, `TEAM_MANAGER`, `SPORT_MANAGER`, `SCOUT`, `FAN`, `SPONSOR`
 
-### 4.3 Match Lineups & Formations
-**Description:** Manage team lineups and formations for matches.
-
-**Features:**
-- **Create Lineup** - Select starting 11 players and substitutes for a match
-- **View Lineup** - View team lineup for a match
-- **Update Lineup** - Modify lineup (before match starts)
-- **Create Formation** - Define tactical formation (4-4-2, 4-3-3, etc.)
-- **View Formations** - List all saved formations
-- **Formation Details** - View formation with player positions
-
-### 4.4 Player Match Statistics
-**Description:** Track and view individual player statistics for matches.
-
-**Features:**
-- **Record Statistics** - Record player statistics (goals, assists, passes, tackles, shots, etc.)
-- **View Statistics** - View statistics for a specific match and player
-- **Player Statistics History** - View all match statistics for a player
-- **Statistics Comparison** - Compare statistics between players or matches
-
-### 4.5 Match Performance Reviews
-**Description:** Review and analyze team/player performance in matches.
-
-**Features:**
-- **Create Review** - Create performance review for match with analysis, ratings, notes
-- **View Reviews** - List all performance reviews with filters
-- **Review Details** - View complete review with analysis
-- **Team Performance** - View overall team performance analysis
-- **Player Performance** - View individual player performance in match
+**Kafka Events Published:**
+- `user.created` - when a new user is registered
+- `user.updated` - when user profile is updated
+- `user.deleted` - when a user is deleted
+- `player.status.changed` - when a player's status changes (e.g., Available -> Injured)
 
 ---
 
-## 5. Medical & Fitness Management
+## 2. Player Management Service
 
-### 5.1 Injury Management
-**Description:** Track and manage player injuries.
+**Gateway Base URL:** `http://localhost:8080/api/player-management`
 
-**Features:**
-- **Report Injury** - Report new injury with type, severity, body part, description, date
-- **View Injuries** - List all injuries with filters by player, status, severity, date
-- **Injury Details** - View complete injury information including diagnosis, treatment, rehabilitation
-- **Update Injury Status** - Change injury status (Reported, Diagnosed, Treating, Recovering, Recovered, Chronic)
-- **Injury History** - View all injuries for a player
-- **Injury Types:** Muscle Strain, Ligament Sprain, Fracture, Contusion, Tendonitis, Dislocation, Concussion
-- **Severity Levels:** Minor, Moderate, Severe, Critical
+### 2.1 Player Contract Endpoints (`/player-contracts`)
 
-### 5.2 Diagnosis Management
-**Description:** Record and manage medical diagnoses for injuries.
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/player-contracts` | ADMIN, SPORT_MANAGER | Create contract |
+| PUT | `/player-contracts/{id}` | ADMIN, SPORT_MANAGER | Update contract |
+| GET | `/player-contracts/{id}` | ADMIN, SPORT_MANAGER, TEAM_MANAGER | Get contract by ID |
+| GET | `/player-contracts` | ADMIN, SPORT_MANAGER, TEAM_MANAGER | Get all contracts |
+| DELETE | `/player-contracts/{id}` | ADMIN | Delete contract |
 
-**Features:**
-- **Create Diagnosis** - Add diagnosis for an injury with medical notes, test results, recommendations
-- **View Diagnoses** - List all diagnoses with filters
-- **Diagnosis Details** - View complete diagnosis information
-- **Attach Test Results** - Link test results/files to diagnosis
-- **Diagnosis History** - View all diagnoses for an injury
+**Request Fields:** `playerKeycloakId` (String), startDate, endDate, salary, releaseClause
 
-### 5.3 Treatment Management
-**Description:** Manage treatment plans for injuries.
+### 2.2 Player Transfer - Incoming (`/player-transfers-incoming`)
 
-**Features:**
-- **Create Treatment** - Add treatment plan with type, description, medication, dosage, start/end dates
-- **View Treatments** - List all treatments with filters by injury, player, status
-- **Treatment Details** - View complete treatment information
-- **Update Treatment Status** - Change treatment status (Planned, In Progress, Completed, Cancelled)
-- **Treatment History** - View all treatments for an injury
-- **Treatment Response** - Record player's response to treatment
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/player-transfers-incoming` | ADMIN, SPORT_MANAGER | Create incoming transfer |
+| PUT | `/player-transfers-incoming/{id}` | ADMIN, SPORT_MANAGER | Update transfer |
+| GET | `/player-transfers-incoming/{id}` | ADMIN, SPORT_MANAGER, TEAM_MANAGER | Get transfer by ID |
+| GET | `/player-transfers-incoming` | ADMIN, SPORT_MANAGER, TEAM_MANAGER | Get all transfers |
+| DELETE | `/player-transfers-incoming/{id}` | ADMIN | Delete transfer |
 
-### 5.4 Rehabilitation Management
-**Description:** Manage rehabilitation programs for injured players.
+### 2.3 Player Transfer - Outgoing (`/player-transfers-outgoing`)
 
-**Features:**
-- **Create Rehabilitation** - Create rehab program with plan, exercises, duration, restrictions
-- **View Rehabilitations** - List all rehabilitation programs with filters
-- **Rehabilitation Details** - View complete program information
-- **Update Rehab Status** - Change status (Not Started, In Progress, Completed, Paused)
-- **Progress Notes** - Record rehabilitation progress
-- **Rehabilitation History** - View all rehab programs for a player
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/player-transfers-outgoing` | ADMIN, SPORT_MANAGER | Create outgoing transfer |
+| PUT | `/player-transfers-outgoing/{id}` | ADMIN, SPORT_MANAGER | Update transfer |
+| GET | `/player-transfers-outgoing/{id}` | ADMIN, SPORT_MANAGER, TEAM_MANAGER | Get transfer by ID |
+| GET | `/player-transfers-outgoing` | ADMIN, SPORT_MANAGER, TEAM_MANAGER | Get all transfers |
+| DELETE | `/player-transfers-outgoing/{id}` | ADMIN | Delete transfer |
 
-### 5.5 Recovery Programs
-**Description:** Manage recovery programs linked to rehabilitation.
+**Transfer Fields:** `playerKeycloakId` (String), fromTeam/toTeam, transferFee, transferDate, status, contractDetails
 
-**Features:**
-- **Create Recovery Program** - Create program with activities, nutrition plan, sessions per week
-- **View Programs** - List all recovery programs
-- **Program Details** - View complete program information
-- **Update Program Status** - Change status (Active, Completed, Paused, Cancelled)
-- **Program Progress** - Track recovery program progress
+### 2.4 Roster Endpoints (`/rosters`)
 
-### 5.6 Fitness Tests
-**Description:** Record and track player fitness test results.
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/rosters` | ADMIN, TEAM_MANAGER, HEAD_COACH | Create roster |
+| PUT | `/rosters/{id}` | ADMIN, TEAM_MANAGER, HEAD_COACH | Update roster |
+| GET | `/rosters/{id}` | ADMIN, TEAM_MANAGER, HEAD_COACH, SPORT_MANAGER | Get roster by ID |
+| GET | `/rosters` | ADMIN, TEAM_MANAGER, HEAD_COACH, SPORT_MANAGER | Get all rosters |
+| DELETE | `/rosters/{id}` | ADMIN | Delete roster |
 
-**Features:**
-- **Create Fitness Test** - Record test with type, date, result, unit, category
-- **View Tests** - List all fitness tests with filters by player, type, date
-- **Test Details** - View complete test information
-- **Test History** - View all fitness tests for a player
-- **Test Comparison** - Compare test results over time
-- **Test Types:** VO2 Max, Speed Test, Agility Test, Strength Test, Flexibility Test, Endurance Test, Body Composition
+### 2.5 National Team Call-Up Endpoints (`/player-call-ups`)
 
-### 5.7 Training Load Tracking
-**Description:** Monitor training load and intensity for players.
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/player-call-ups` | ADMIN, SPORT_MANAGER | Create call-up request |
+| PUT | `/player-call-ups/{id}` | ADMIN, SPORT_MANAGER | Update call-up |
+| GET | `/player-call-ups/{id}` | ADMIN, SPORT_MANAGER, TEAM_MANAGER | Get call-up by ID |
+| GET | `/player-call-ups` | ADMIN, SPORT_MANAGER, TEAM_MANAGER | Get all call-ups |
+| DELETE | `/player-call-ups/{id}` | ADMIN | Delete call-up |
 
-**Features:**
-- **Record Training Load** - Record load data (duration, intensity, distance, heart rate) for training sessions
-- **View Training Load** - List training load records with filters
-- **Load Analysis** - Analyze training load trends over time
-- **Load Warnings** - Get alerts for excessive training load
-- **Recovery Recommendations** - View recommendations based on training load
+**Call-Up Fields:** `playerKeycloakId` (String), `nationalTeamKeycloakId` (String), callUpDate, returnDate, status
 
----
+### 2.6 Outer Player Endpoints (`/outer-players`)
 
-## 6. Reports & Analytics
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/outer-players` | ADMIN, SCOUT, SPORT_MANAGER | Create outer player |
+| PUT | `/outer-players/{id}` | ADMIN, SCOUT, SPORT_MANAGER | Update outer player |
+| GET | `/outer-players/{id}` | ADMIN, SCOUT, SPORT_MANAGER, TEAM_MANAGER | Get outer player by ID |
+| GET | `/outer-players` | ADMIN, SCOUT, SPORT_MANAGER, TEAM_MANAGER | Get all outer players |
+| DELETE | `/outer-players/{id}` | ADMIN | Delete outer player |
 
-### 6.1 Report Generation
-**Description:** Generate various types of reports from system data.
+### 2.7 Outer Team Endpoints (`/outer-teams`)
 
-**Features:**
-- **Create Report** - Generate report with type, parameters, filters
-- **View Reports** - List all generated reports with filters by type, date, creator
-- **Report Details** - View complete report with data
-- **Report Types:**
-  - Player Performance Report
-  - Team Analytics Report
-  - Match Analysis Report
-  - Training Report
-  - Medical Report
-  - Financial Report
-  - Transfer Report
-  - Custom Report
-- **Report Status:** Draft, Generating, Completed, Failed
-- **Report Parameters** - Set filters and parameters for report generation
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/outer-teams` | ADMIN, SCOUT, SPORT_MANAGER | Create outer team |
+| PUT | `/outer-teams/{id}` | ADMIN, SCOUT, SPORT_MANAGER | Update outer team |
+| GET | `/outer-teams/{id}` | ADMIN, SCOUT, SPORT_MANAGER, TEAM_MANAGER | Get outer team by ID |
+| GET | `/outer-teams` | ADMIN, SCOUT, SPORT_MANAGER, TEAM_MANAGER | Get all outer teams |
+| DELETE | `/outer-teams/{id}` | ADMIN | Delete outer team |
 
-### 6.2 Report Export
-**Description:** Export reports in different formats.
-
-**Features:**
-- **Export Report** - Export report in PDF, Excel, CSV, or JSON format
-- **View Exports** - List all exported reports
-- **Download Export** - Download exported report file
-- **Export History** - View export history for a report
-- **Export Formats:** PDF, Excel, CSV, JSON
-
-### 6.3 Player Analytics
-**Description:** View aggregated analytics and statistics for players.
-
-**Features:**
-- **View Player Analytics** - View comprehensive player analytics including:
-  - Performance metrics (matches, goals, assists, ratings)
-  - Training statistics (sessions, attendance rate)
-  - Fitness metrics (injuries, fitness scores, tests)
-  - KPI data and trends
-- **Analytics Period** - View analytics for specific time periods
-- **Analytics Comparison** - Compare analytics between players or time periods
-- **Analytics Trends** - View performance trends over time
-
-### 6.4 Match Analysis
-**Description:** Analyze match data and generate insights.
-
-**Features:**
-- **View Match Analysis** - View match statistics and analysis including:
-  - Possession, shots, passes, tackles statistics
-  - Key moments and tactical analysis
-  - Player ratings
-  - Heatmap data (file references)
-- **Heatmap Types:** Player Movement, Ball Position, Pressure Map
-- **Analysis History** - View all analyses for a match
-- **Tactical Insights** - View tactical analysis and recommendations
+**Kafka Events Published:**
+- `transfer.incoming.completed` - when an incoming transfer is completed
+- `transfer.outgoing.completed` - when an outgoing transfer is completed
+- `contract.created` - when a new player contract is created
+- `roster.updated` - when a roster is modified
+- `callup.approved` - when a national team call-up is approved
 
 ---
 
-## 7. Notifications & Messaging
+## 3. Training & Match Service
 
-### 7.1 Notifications
-**Description:** Receive and manage system notifications.
+**Gateway Base URL:** `http://localhost:8080/api/training-match`
 
-**Features:**
-- **View Notifications** - List all notifications with filters by type, status, date
-- **Notification Details** - View complete notification information
-- **Mark as Read** - Mark notification as read
-- **Notification Types:** In-app, Email, Both
-- **Notification Categories:**
-  - Injury notifications
-  - KPI alerts
-  - Transfer notifications
-  - Report ready notifications
-  - Match reminders
-  - Training reminders
-  - System notifications
-- **Notification Status:** Pending, Sent, Delivered, Read, Failed
-- **Action Links** - Click notification to navigate to related content
+### 3.1 Training Session Endpoints (`/training-sessions`)
 
-### 7.2 Internal Messaging
-**Description:** Send and receive internal messages between users (e.g., Coach to Doctor).
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/training-sessions` | ADMIN, HEAD_COACH | Create training session |
+| PUT | `/training-sessions/{id}` | ADMIN, HEAD_COACH | Update session |
+| GET | `/training-sessions/{id}` | ADMIN, HEAD_COACH, ASSISTANT_COACH, FITNESS_COACH | Get session by ID |
+| GET | `/training-sessions` | ADMIN, HEAD_COACH, ASSISTANT_COACH, FITNESS_COACH | Get all sessions |
+| DELETE | `/training-sessions/{id}` | ADMIN, HEAD_COACH | Delete session |
 
-**Features:**
-- **Send Message** - Send message to another user with subject, content, optional attachments
-- **View Messages** - List all messages (sent and received) with filters
-- **Message Thread** - View message conversation thread
-- **Reply to Message** - Reply to existing message
-- **Message Status:** Sent, Delivered, Read
-- **Message Attachments** - Attach files to messages
-- **Related Entity Links** - Link messages to related entities (injuries, players, etc.)
+**Session Fields:** teamId, headCoachId, specificCoachId, type, status, location, date, duration, objectives
 
-### 7.3 Alerts
-**Description:** System-generated alerts for important events.
+### 3.2 Training Plan Endpoints (`/training-plans`)
 
-**Features:**
-- **View Alerts** - List all alerts with filters by type, priority, status
-- **Alert Details** - View complete alert information
-- **Acknowledge Alert** - Mark alert as acknowledged
-- **Resolve Alert** - Mark alert as resolved
-- **Alert Types:**
-  - Injury Reported
-  - KPI Drop
-  - Transfer Completed
-  - Report Generated
-  - Match Upcoming
-  - Training Cancelled
-  - Medical Checkup Due
-  - Contract Expiring
-- **Alert Priority:** Low, Medium, High, Critical
-- **Alert Actions** - View required actions for alerts
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/training-plans` | ADMIN, HEAD_COACH | Create training plan |
+| PUT | `/training-plans/{id}` | ADMIN, HEAD_COACH | Update plan |
+| GET | `/training-plans/{id}` | ADMIN, HEAD_COACH, ASSISTANT_COACH | Get plan by ID |
+| GET | `/training-plans` | ADMIN, HEAD_COACH, ASSISTANT_COACH | Get all plans |
+| DELETE | `/training-plans/{id}` | ADMIN, HEAD_COACH | Delete plan |
 
----
+### 3.3 Training Attendance Endpoints (`/training-attendance`)
 
-## 8. Common Features Across All Modules
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/training-attendance` | ADMIN, HEAD_COACH, ASSISTANT_COACH | Record attendance |
+| PUT | `/training-attendance/{id}` | ADMIN, HEAD_COACH, ASSISTANT_COACH | Update attendance |
+| GET | `/training-attendance/{id}` | ADMIN, HEAD_COACH, ASSISTANT_COACH, FITNESS_COACH | Get by ID |
+| GET | `/training-attendance` | ADMIN, HEAD_COACH, ASSISTANT_COACH, FITNESS_COACH | Get all |
+| DELETE | `/training-attendance/{id}` | ADMIN | Delete attendance |
 
-### 8.1 Search & Filtering
-- **Global Search** - Search across all entities (players, teams, matches, etc.)
-- **Advanced Filters** - Filter by multiple criteria (date range, status, type, etc.)
-- **Saved Filters** - Save frequently used filter combinations
+### 3.4 Training Drill Endpoints (`/training-drills`)
 
-### 8.2 Data Visualization
-- **Charts & Graphs** - Visual representation of data (performance trends, statistics)
-- **Calendar Views** - Calendar display for schedules (training, matches)
-- **Dashboard Widgets** - Customizable dashboard with key metrics
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/training-drills` | ADMIN, HEAD_COACH, ASSISTANT_COACH | Add drill |
+| PUT | `/training-drills/{id}` | ADMIN, HEAD_COACH, ASSISTANT_COACH | Update drill |
+| GET | `/training-drills/{id}` | ADMIN, HEAD_COACH, ASSISTANT_COACH, FITNESS_COACH | Get drill by ID |
+| GET | `/training-drills` | ADMIN, HEAD_COACH, ASSISTANT_COACH, FITNESS_COACH | Get all drills |
+| DELETE | `/training-drills/{id}` | ADMIN | Delete drill |
 
-### 8.3 File Management
-- **File Upload** - Upload files (images, documents, reports)
-- **File Storage** - Files stored externally, references in system
-- **File Download** - Download attached files
+### 3.5 Player Training Assessment Endpoints (`/player-training-assessments`)
 
-### 8.4 User Permissions
-- **Role-Based Access** - Different features available based on user role
-- **Permission Levels** - View, Create, Update, Delete permissions
-- **Team-Specific Access** - Access limited to assigned teams
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/player-training-assessments` | ADMIN, HEAD_COACH | Create assessment |
+| PUT | `/player-training-assessments/{id}` | ADMIN, HEAD_COACH | Update assessment |
+| GET | `/player-training-assessments/{id}` | ADMIN, HEAD_COACH, ASSISTANT_COACH | Get by ID |
+| GET | `/player-training-assessments` | ADMIN, HEAD_COACH, ASSISTANT_COACH | Get all |
+| DELETE | `/player-training-assessments/{id}` | ADMIN | Delete assessment |
 
-### 8.5 Audit & History
-- **Activity Logs** - Track all user actions
-- **Change History** - View history of changes to entities
-- **Version Tracking** - Track versions of documents/reports
+### 3.6 Match Endpoints (`/matches`)
 
----
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/matches` | ADMIN, TEAM_MANAGER | Schedule match |
+| PUT | `/matches/{id}` | ADMIN, TEAM_MANAGER | Update match |
+| GET | `/matches/{id}` | ADMIN, TEAM_MANAGER, HEAD_COACH, SPORT_MANAGER | Get match by ID |
+| GET | `/matches` | ADMIN, TEAM_MANAGER, HEAD_COACH, SPORT_MANAGER | Get all matches |
+| DELETE | `/matches/{id}` | ADMIN | Delete match |
 
-## 9. User Interface Considerations
+**Match Types:** `FRIENDLY`, `LEAGUE`, `CUP`, `TOURNAMENT`, `PRE_SEASON`
+**Match Status:** `SCHEDULED`, `LIVE`, `FINISHED`, `CANCELLED`, `POSTPONED`
 
-### 9.1 Navigation Structure
-- **Main Menu** - Organized by modules (Users, Players, Training, Matches, Medical, Reports, Notifications)
-- **Role-Based Menu** - Menu items shown based on user role
-- **Quick Actions** - Quick access to frequently used features
-- **Breadcrumbs** - Navigation path indicator
+### 3.7 Match Event Endpoints (`/match-events`)
 
-### 9.2 Data Display
-- **Tables/Lists** - Paginated tables with sorting and filtering
-- **Cards** - Card-based layout for entities
-- **Detail Views** - Comprehensive detail pages with tabs/sections
-- **Summary Views** - Quick summary information
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/match-events` | ADMIN, HEAD_COACH | Record event |
+| PUT | `/match-events/{id}` | ADMIN, HEAD_COACH | Update event |
+| GET | `/match-events/{id}` | ADMIN, HEAD_COACH, TEAM_MANAGER | Get event by ID |
+| GET | `/match-events` | ADMIN, HEAD_COACH, TEAM_MANAGER | Get all events |
+| DELETE | `/match-events/{id}` | ADMIN | Delete event |
 
-### 9.3 Forms & Input
-- **Create Forms** - Forms for creating new entities
-- **Edit Forms** - Forms for updating existing entities
-- **Validation** - Real-time form validation
-- **Wizard Forms** - Multi-step forms for complex entities
+**Event Fields:** matchId, `playerKeycloakId` (String), teamId, eventType, minute, extraTime, description
+**Event Types:** `GOAL`, `ASSIST`, `YELLOW_CARD`, `RED_CARD`, `SUBSTITUTION`, `INJURY`
 
-### 9.4 Responsive Design
-- **Mobile Support** - Responsive design for mobile devices
-- **Tablet Support** - Optimized for tablet screens
-- **Desktop Support** - Full-featured desktop experience
+### 3.8 Match Lineup Endpoints (`/match-lineups`)
 
----
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/match-lineups` | ADMIN, HEAD_COACH | Create lineup |
+| PUT | `/match-lineups/{id}` | ADMIN, HEAD_COACH | Update lineup |
+| GET | `/match-lineups/{id}` | ADMIN, HEAD_COACH, TEAM_MANAGER | Get lineup by ID |
+| GET | `/match-lineups` | ADMIN, HEAD_COACH, TEAM_MANAGER | Get all lineups |
+| DELETE | `/match-lineups/{id}` | ADMIN | Delete lineup |
 
-## 10. Key User Flows
+### 3.9 Match Formation Endpoints (`/match-formations`)
 
-### 10.1 Player Registration Flow
-1. User registers with basic information
-2. Select role (Player)
-3. Complete player-specific profile
-4. Assign to team
-5. Profile activated
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/match-formations` | ADMIN, HEAD_COACH | Create formation |
+| PUT | `/match-formations/{id}` | ADMIN, HEAD_COACH | Update formation |
+| GET | `/match-formations/{id}` | ADMIN, HEAD_COACH, TEAM_MANAGER | Get formation by ID |
+| GET | `/match-formations` | ADMIN, HEAD_COACH, TEAM_MANAGER | Get all formations |
+| DELETE | `/match-formations/{id}` | ADMIN | Delete formation |
 
-### 10.2 Training Session Flow
-1. Coach creates training session
-2. Players receive notification
-3. Training session occurs
-4. Coach records attendance
-5. Coach adds drills and assessments
-6. Training data saved
+**Formation Fields:** teamId, `setByCoachKeycloakId` (String), formation (e.g. "4-4-2"), tacticalApproach, formationDetails
 
-### 10.3 Match Management Flow
-1. Create match schedule
-2. Set lineup and formation
-3. Match occurs
-4. Record events and statistics
-5. Generate match analysis
-6. Create performance review
+### 3.10 Player Match Statistics Endpoints (`/player-match-statistics`)
 
-### 10.4 Injury Management Flow
-1. Injury reported
-2. Doctor creates diagnosis
-3. Treatment plan created
-4. Rehabilitation program started
-5. Recovery program assigned
-6. Injury status updated to recovered
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/player-match-statistics` | ADMIN, HEAD_COACH, PERFORMANCE_ANALYST | Record stats |
+| PUT | `/player-match-statistics/{id}` | ADMIN, HEAD_COACH, PERFORMANCE_ANALYST | Update stats |
+| GET | `/player-match-statistics/{id}` | ADMIN, HEAD_COACH, TEAM_MANAGER, PERFORMANCE_ANALYST | Get by ID |
+| GET | `/player-match-statistics` | ADMIN, HEAD_COACH, TEAM_MANAGER, PERFORMANCE_ANALYST | Get all |
+| DELETE | `/player-match-statistics/{id}` | ADMIN | Delete stats |
 
-### 10.5 Transfer Flow
-1. Create transfer request
-2. Review and approve
-3. Complete transfer process
-4. Update player contract
-5. Update roster
-6. Notifications sent
+### 3.11 Match Performance Review Endpoints (`/match-performance-reviews`)
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/match-performance-reviews` | ADMIN, HEAD_COACH, PERFORMANCE_ANALYST | Create review |
+| PUT | `/match-performance-reviews/{id}` | ADMIN, HEAD_COACH, PERFORMANCE_ANALYST | Update review |
+| GET | `/match-performance-reviews/{id}` | ADMIN, HEAD_COACH, TEAM_MANAGER | Get by ID |
+| GET | `/match-performance-reviews` | ADMIN, HEAD_COACH, TEAM_MANAGER | Get all |
+| DELETE | `/match-performance-reviews/{id}` | ADMIN | Delete review |
+
+**Kafka Events Published:**
+- `match.scheduled` - when a new match is scheduled
+- `match.completed` - when a match finishes
+- `match.cancelled` - when a match is cancelled
+- `training.session.completed` - when a training session completes
+- `training.session.cancelled` - when a training session is cancelled
 
 ---
 
-## Notes for UI/UX Designers
+## 4. Medical & Fitness Service
 
-1. **User Roles Matter** - Different users see different features. Design role-specific interfaces.
-2. **Data Relationships** - Many entities are related (Player → Team → Training → Match). Show these relationships clearly.
-3. **Status Indicators** - Use clear visual indicators for statuses (colors, icons, badges).
-4. **Date/Time Handling** - Many features involve dates and times. Provide good date pickers and calendar views.
-5. **Notifications Priority** - Important alerts should be prominently displayed.
-6. **Mobile First** - Consider mobile usage, especially for coaches and medical staff on the field.
-7. **Data Entry Efficiency** - Minimize clicks for common tasks (quick actions, bulk operations).
-8. **Visual Feedback** - Provide clear feedback for all actions (success, error, loading states).
-9. **Help & Guidance** - Consider tooltips and help text for complex features.
-10. **Consistency** - Maintain consistent patterns across all modules for better user experience.
+**Gateway Base URL:** `http://localhost:8080/api/medical-fitness`
+
+### 4.1 Injury Endpoints (`/injuries`)
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/injuries` | ADMIN, DOCTOR | Report injury |
+| PUT | `/injuries/{id}` | ADMIN, DOCTOR | Update injury |
+| GET | `/injuries/{id}` | ADMIN, DOCTOR, HEAD_COACH, TEAM_MANAGER | Get injury by ID |
+| GET | `/injuries` | ADMIN, DOCTOR, HEAD_COACH, TEAM_MANAGER | Get all injuries |
+| DELETE | `/injuries/{id}` | ADMIN | Delete injury |
+
+**Injury Types:** `MUSCLE_STRAIN`, `LIGAMENT_SPRAIN`, `FRACTURE`, `CONTUSION`, `TENDONITIS`, `DISLOCATION`, `CONCUSSION`
+**Severity Levels:** `MINOR`, `MODERATE`, `SEVERE`, `CRITICAL`
+**Injury Status:** `REPORTED`, `DIAGNOSED`, `TREATING`, `RECOVERING`, `RECOVERED`, `CHRONIC`
+
+### 4.2 Diagnosis Endpoints (`/diagnoses`)
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/diagnoses` | ADMIN, DOCTOR | Create diagnosis |
+| PUT | `/diagnoses/{id}` | ADMIN, DOCTOR | Update diagnosis |
+| GET | `/diagnoses/{id}` | ADMIN, DOCTOR, HEAD_COACH | Get diagnosis by ID |
+| GET | `/diagnoses` | ADMIN, DOCTOR, HEAD_COACH | Get all diagnoses |
+| DELETE | `/diagnoses/{id}` | ADMIN | Delete diagnosis |
+
+**Diagnosis Fields:** `playerKeycloakId` (String), `doctorKeycloakId` (String), injuryId, diagnosis, medicalNotes, testResults, recommendations
+
+### 4.3 Treatment Endpoints (`/treatments`)
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/treatments` | ADMIN, DOCTOR | Create treatment |
+| PUT | `/treatments/{id}` | ADMIN, DOCTOR | Update treatment |
+| GET | `/treatments/{id}` | ADMIN, DOCTOR, HEAD_COACH, PHYSIOTHERAPIST | Get by ID |
+| GET | `/treatments` | ADMIN, DOCTOR, HEAD_COACH, PHYSIOTHERAPIST | Get all |
+| DELETE | `/treatments/{id}` | ADMIN | Delete treatment |
+
+**Treatment Status:** `PLANNED`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED`
+
+### 4.4 Rehabilitation Endpoints (`/rehabilitations`)
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/rehabilitations` | ADMIN, DOCTOR, PHYSIOTHERAPIST | Create rehab |
+| PUT | `/rehabilitations/{id}` | ADMIN, DOCTOR, PHYSIOTHERAPIST | Update rehab |
+| GET | `/rehabilitations/{id}` | ADMIN, DOCTOR, PHYSIOTHERAPIST, HEAD_COACH | Get by ID |
+| GET | `/rehabilitations` | ADMIN, DOCTOR, PHYSIOTHERAPIST, HEAD_COACH | Get all |
+| DELETE | `/rehabilitations/{id}` | ADMIN | Delete rehab |
+
+**Rehab Status:** `NOT_STARTED`, `IN_PROGRESS`, `COMPLETED`, `PAUSED`
+
+### 4.5 Recovery Program Endpoints (`/recovery-programs`)
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/recovery-programs` | ADMIN, DOCTOR, PHYSIOTHERAPIST | Create program |
+| PUT | `/recovery-programs/{id}` | ADMIN, DOCTOR, PHYSIOTHERAPIST | Update program |
+| GET | `/recovery-programs/{id}` | ADMIN, DOCTOR, PHYSIOTHERAPIST, HEAD_COACH, FITNESS_COACH | Get by ID |
+| GET | `/recovery-programs` | ADMIN, DOCTOR, PHYSIOTHERAPIST, HEAD_COACH, FITNESS_COACH | Get all |
+| DELETE | `/recovery-programs/{id}` | ADMIN | Delete program |
+
+### 4.6 Fitness Test Endpoints (`/fitness-tests`)
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/fitness-tests` | ADMIN, DOCTOR, FITNESS_COACH | Create test |
+| PUT | `/fitness-tests/{id}` | ADMIN, DOCTOR, FITNESS_COACH | Update test |
+| GET | `/fitness-tests/{id}` | ADMIN, DOCTOR, FITNESS_COACH, HEAD_COACH | Get by ID |
+| GET | `/fitness-tests` | ADMIN, DOCTOR, FITNESS_COACH, HEAD_COACH | Get all |
+| DELETE | `/fitness-tests/{id}` | ADMIN | Delete test |
+
+**Fitness Test Fields:** `playerKeycloakId` (String), `conductedByDoctorKeycloakId` (String), testType, testDate, result, unit, category
+**Test Types:** `VO2_MAX`, `SPEED_TEST`, `AGILITY_TEST`, `STRENGTH_TEST`, `FLEXIBILITY_TEST`, `ENDURANCE_TEST`, `BODY_COMPOSITION`
+
+### 4.7 Training Load Endpoints (`/training-loads`)
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/training-loads` | ADMIN, FITNESS_COACH | Record training load |
+| PUT | `/training-loads/{id}` | ADMIN, FITNESS_COACH | Update training load |
+| GET | `/training-loads/{id}` | ADMIN, FITNESS_COACH, HEAD_COACH, DOCTOR | Get by ID |
+| GET | `/training-loads` | ADMIN, FITNESS_COACH, HEAD_COACH, DOCTOR | Get all |
+| DELETE | `/training-loads/{id}` | ADMIN | Delete training load |
+
+**Kafka Events Published:**
+- `injury.reported` - when a new injury is reported
+- `injury.status.changed` - when an injury status changes
+- `fitness.test.completed` - when a fitness test is completed
+- `treatment.completed` - when a treatment is marked complete
+- `rehabilitation.completed` - when a rehabilitation program completes
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** 2025  
-**Prepared for:** UI/UX Design Team
+## 5. Reports & Analytics Service
 
-     
+**Gateway Base URL:** `http://localhost:8080/api/reports-analytics`
+
+### 5.1 Match Analysis Endpoints (`/match-analyses`)
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/match-analyses` | ADMIN, PERFORMANCE_ANALYST, HEAD_COACH | Create analysis |
+| PUT | `/match-analyses/{id}` | ADMIN, PERFORMANCE_ANALYST, HEAD_COACH | Update analysis |
+| GET | `/match-analyses/{id}` | ADMIN, PERFORMANCE_ANALYST, HEAD_COACH, TEAM_MANAGER, SPORT_MANAGER | Get by ID |
+| GET | `/match-analyses` | ADMIN, PERFORMANCE_ANALYST, HEAD_COACH, TEAM_MANAGER, SPORT_MANAGER | Get all |
+| DELETE | `/match-analyses/{id}` | ADMIN | Delete analysis |
+
+**Match Analysis Fields:** matchId, `analyzedByUserKeycloakId` (String), possession, shots, shotsOnTarget, passes, passAccuracy, tackles, fouls, corners, offsides, yellowCards, redCards, keyMoments, tacticalAnalysis, playerRatings, heatmapData, heatmapType
+
+### 5.2 Player Analytics Endpoints (`/player-analytics`)
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/player-analytics` | ADMIN, PERFORMANCE_ANALYST | Create analytics |
+| PUT | `/player-analytics/{id}` | ADMIN, PERFORMANCE_ANALYST | Update analytics |
+| GET | `/player-analytics/{id}` | ADMIN, PERFORMANCE_ANALYST, HEAD_COACH, TEAM_MANAGER | Get by ID |
+| GET | `/player-analytics` | ADMIN, PERFORMANCE_ANALYST, HEAD_COACH, TEAM_MANAGER | Get all |
+| DELETE | `/player-analytics/{id}` | ADMIN | Delete analytics |
+
+**Player Analytics Fields:** `playerKeycloakId` (String), `analyzedByUserKeycloakId` (String), season, matchesPlayed, goals, assists, averageRating, trainingSessions, trainingAttendanceRate, injuries, fitnessScore, performanceTrend, kpiData
+
+### 5.3 Scout Report Endpoints (`/scout-reports`)
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/scout-reports` | ADMIN, SCOUT | Create scout report |
+| PUT | `/scout-reports/{id}` | ADMIN, SCOUT | Update report |
+| GET | `/scout-reports/{id}` | ADMIN, SCOUT, SPORT_MANAGER | Get by ID |
+| GET | `/scout-reports` | ADMIN, SCOUT, SPORT_MANAGER | Get all |
+| DELETE | `/scout-reports/{id}` | ADMIN | Delete report |
+
+**Scout Report Fields:** `scoutKeycloakId` (String), outerPlayerId, outerTeamId, playerName, playerAge, playerPosition, playerNationality, scoutDate, technicalRating, tacticalRating, physicalRating, mentalRating, overallRating, strengths, weaknesses, recommendation, notes, marketValueEstimate
+
+### 5.4 Sponsor Contract Offer Endpoints (`/sponsor-contract-offers`)
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/sponsor-contract-offers` | ADMIN, SPONSOR | Create offer |
+| PUT | `/sponsor-contract-offers/{id}` | ADMIN, SPONSOR | Update offer |
+| GET | `/sponsor-contract-offers/{id}` | ADMIN, SPONSOR, SPORT_MANAGER, TEAM_MANAGER | Get by ID |
+| GET | `/sponsor-contract-offers` | ADMIN, SPONSOR, SPORT_MANAGER, TEAM_MANAGER | Get all |
+| DELETE | `/sponsor-contract-offers/{id}` | ADMIN | Delete offer |
+
+**Offer Fields:** `sponsorKeycloakId` (String), sponsorName, offerTitle, description, contractValue, startDate, endDate, sponsorshipType, status, terms, benefits, targetTeamId
+
+### 5.5 Team Analytics Endpoints (`/team-analytics`)
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/team-analytics` | ADMIN, PERFORMANCE_ANALYST | Create team analytics |
+| PUT | `/team-analytics/{id}` | ADMIN, PERFORMANCE_ANALYST | Update analytics |
+| GET | `/team-analytics/{id}` | ADMIN, PERFORMANCE_ANALYST, HEAD_COACH, TEAM_MANAGER, SPORT_MANAGER | Get by ID |
+| GET | `/team-analytics` | ADMIN, PERFORMANCE_ANALYST, HEAD_COACH, TEAM_MANAGER, SPORT_MANAGER | Get all |
+| DELETE | `/team-analytics/{id}` | ADMIN | Delete analytics |
+
+**Team Analytics Fields:** teamId, `analyzedByUserKeycloakId` (String), season, matchesPlayed, wins, draws, losses, goalsFor, goalsAgainst, goalDifference, cleanSheets, averagePossession, averagePassAccuracy, strengthAnalysis, weaknessAnalysis, performanceTrend
+
+### 5.6 Training Analytics Endpoints (`/training-analytics`)
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/training-analytics` | ADMIN, PERFORMANCE_ANALYST | Create training analytics |
+| PUT | `/training-analytics/{id}` | ADMIN, PERFORMANCE_ANALYST | Update analytics |
+| GET | `/training-analytics/{id}` | ADMIN, PERFORMANCE_ANALYST, HEAD_COACH, FITNESS_COACH | Get by ID |
+| GET | `/training-analytics` | ADMIN, PERFORMANCE_ANALYST, HEAD_COACH, FITNESS_COACH | Get all |
+| DELETE | `/training-analytics/{id}` | ADMIN | Delete analytics |
+
+**Training Analytics Fields:** teamId, `analyzedByUserKeycloakId` (String), season, totalSessions, averageAttendanceRate, averageSessionDuration, sessionTypes, intensityDistribution, playerProgressData, injuryCorrelation, recommendations
+
+---
+
+## 6. Notification & Mail Service
+
+**Gateway Base URL:** `http://localhost:8080/api/notification-mail`
+
+### 6.1 Notification Endpoints (`/notifications`)
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/notifications` | ADMIN | Create notification |
+| PUT | `/notifications/{id}` | ADMIN | Update notification |
+| GET | `/notifications/{id}` | ADMIN, TEAM_MANAGER, HEAD_COACH, SPORT_MANAGER | Get by ID |
+| GET | `/notifications` | ADMIN | Get all notifications |
+| DELETE | `/notifications/{id}` | ADMIN | Delete notification |
+| GET | `/notifications/recipient/{keycloakId}` | ALL AUTHENTICATED | Get notifications for user |
+| GET | `/notifications/recipient/{keycloakId}/unread` | ALL AUTHENTICATED | Get unread notifications |
+| PATCH | `/notifications/{id}/read` | ALL AUTHENTICATED | Mark notification as read |
+
+**Notification Fields:** `recipientUserKeycloakId` (String), notificationType, category, status, title, message, emailSubject, emailBody, relatedEntityId, relatedEntityType, actionUrl
+
+**Notification Types:** `IN_APP`, `EMAIL`, `BOTH`
+**Notification Categories:** `INJURY`, `KPI`, `TRANSFER`, `REPORT`, `MATCH_REMINDER`, `TRAINING_REMINDER`, `SYSTEM`
+**Notification Status:** `PENDING`, `SENT`, `DELIVERED`, `READ`, `FAILED`
+
+**Auto-Generated Notifications (via Kafka events):**
+- Injury reported -> notification to coaches and medical staff
+- Match scheduled -> notification to players and coaches
+- Match completed -> notification to analysts
+- Training cancelled -> notification to players
+- Player status changed -> notification to coaches
+- Transfer completed -> notification to managers
+
+### 6.2 Alert Endpoints (`/alerts`)
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/alerts` | ADMIN | Create alert |
+| PUT | `/alerts/{id}` | ADMIN | Update alert |
+| GET | `/alerts/{id}` | ADMIN, TEAM_MANAGER, HEAD_COACH, DOCTOR | Get by ID |
+| GET | `/alerts` | ADMIN, TEAM_MANAGER, HEAD_COACH, DOCTOR | Get all alerts |
+| DELETE | `/alerts/{id}` | ADMIN | Delete alert |
+| GET | `/alerts/target/{keycloakId}` | ADMIN, TEAM_MANAGER, HEAD_COACH, DOCTOR | Get alerts for user |
+| GET | `/alerts/unacknowledged` | ADMIN, TEAM_MANAGER, HEAD_COACH, DOCTOR | Get unacknowledged alerts |
+| PATCH | `/alerts/{id}/acknowledge?acknowledgedByKeycloakId=xxx` | ADMIN, TEAM_MANAGER, HEAD_COACH, DOCTOR | Acknowledge alert |
+| PATCH | `/alerts/{id}/resolve` | ADMIN, TEAM_MANAGER, HEAD_COACH | Resolve alert |
+
+**Alert Fields:** alertType, priority, title, message, description, `targetUserKeycloakId` (String), targetRole, relatedEntityId, relatedEntityType, actionRequired, metadata (JSON string)
+
+**Alert Types:** `INJURY_REPORTED`, `KPI_DROP`, `TRANSFER_COMPLETED`, `REPORT_GENERATED`, `MATCH_UPCOMING`, `TRAINING_CANCELLED`, `MEDICAL_CHECKUP_DUE`, `CONTRACT_EXPIRING`
+**Alert Priority:** `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`
+
+### 6.3 Message Endpoints (`/messages`)
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/messages` | ADMIN, TEAM_MANAGER, HEAD_COACH, SPORT_MANAGER, DOCTOR | Send message |
+| PUT | `/messages/{id}` | ADMIN | Update message |
+| GET | `/messages/{id}` | ADMIN, TEAM_MANAGER, HEAD_COACH, SPORT_MANAGER, DOCTOR | Get by ID |
+| GET | `/messages` | ADMIN | Get all messages |
+| DELETE | `/messages/{id}` | ADMIN | Delete message |
+| GET | `/messages/recipient/{keycloakId}` | ADMIN, TEAM_MANAGER, HEAD_COACH, SPORT_MANAGER, PLAYER, DOCTOR, FITNESS_COACH | Get received messages |
+| GET | `/messages/sender/{keycloakId}` | ADMIN, TEAM_MANAGER, HEAD_COACH, SPORT_MANAGER, DOCTOR | Get sent messages |
+
+**Message Fields:** `senderUserKeycloakId` (String), `recipientUserKeycloakId` (String), subject, content, status, relatedEntityId, relatedEntityType, attachments, parentMessageId (for replies/threads)
+
+**Message Status:** `SENT`, `DELIVERED`, `READ`
+
+---
+
+## 7. Key User Flows (Updated)
+
+### 7.1 User Registration Flow
+1. User registers via Keycloak (gets `keycloakId` UUID)
+2. Frontend calls `POST /users` with user details and keycloakId
+3. User is assigned default `FAN` role
+4. Admin changes role if needed (e.g., to `PLAYER`, `DOCTOR`)
+5. Kafka event `user.created` is published
+6. Notification service creates welcome notification
+
+### 7.2 Training Session Flow
+1. Coach creates training session (`POST /training-sessions`)
+2. Kafka event published
+3. Notification service auto-creates notifications for assigned players
+4. Training session occurs
+5. Coach records attendance (`POST /training-attendance`)
+6. Coach adds drills and assessments
+7. When completed, Kafka event `training.session.completed` is published
+
+### 7.3 Match Management Flow
+1. Manager schedules match (`POST /matches`)
+2. Kafka event `match.scheduled` is published -> notifications sent to players/coaches
+3. Coach creates lineup and formation
+4. Match occurs - events recorded live (`POST /match-events`)
+5. Statistics recorded (`POST /player-match-statistics`)
+6. Match completed -> Kafka event `match.completed` published
+7. Analyst creates match analysis (`POST /match-analyses`)
+8. Coach creates performance review (`POST /match-performance-reviews`)
+
+### 7.4 Injury Management Flow
+1. Doctor reports injury (`POST /injuries`)
+2. Kafka event `injury.reported` published -> alert sent to coaches and medical staff
+3. Doctor creates diagnosis (`POST /diagnoses`)
+4. Treatment plan created (`POST /treatments`)
+5. Rehabilitation program started (`POST /rehabilitations`)
+6. Recovery program assigned (`POST /recovery-programs`)
+7. Status updated -> Kafka event `injury.status.changed` published
+8. When treatment/rehab completed -> events published -> notifications sent
+
+### 7.5 Transfer Flow
+1. Sport Manager creates transfer request (`POST /player-transfers-outgoing` or `/player-transfers-incoming`)
+2. Transfer approved and processed
+3. Kafka event `transfer.completed` published
+4. Notification service auto-notifies managers and relevant staff
+5. New contract created (`POST /player-contracts`)
+6. Roster updated (`PUT /rosters/{id}`)
+
+### 7.6 Internal Messaging Flow
+1. Coach sends message to Doctor about player injury (`POST /messages`)
+2. Doctor receives notification about new message
+3. Doctor views messages (`GET /messages/recipient/{keycloakId}`)
+4. Doctor replies (`POST /messages` with `parentMessageId`)
+5. Thread continues as needed
+
+---
+
+## 8. Frontend Integration Notes
+
+### 8.1 Authentication
+- Use Keycloak JS adapter for login/logout
+- Store JWT token and include as `Authorization: Bearer <token>` header
+- Decode JWT to get `sub` claim = user's `keycloakId`
+- Decode JWT to get `realm_access.roles` = user's roles for UI visibility
+
+### 8.2 API Gateway
+- **All API calls go through the Gateway** at `http://localhost:8080`
+- Routes are prefixed:
+  - `/api/user-management/**` -> User Management Service
+  - `/api/player-management/**` -> Player Management Service
+  - `/api/training-match/**` -> Training & Match Service
+  - `/api/medical-fitness/**` -> Medical & Fitness Service
+  - `/api/reports-analytics/**` -> Reports & Analytics Service
+  - `/api/notification-mail/**` -> Notification & Mail Service
+
+### 8.3 Request/Response Format
+- All requests/responses use **JSON**
+- Dates use ISO format: `"2025-03-15"` (LocalDate) or `"2025-03-15T10:30:00"` (LocalDateTime)
+- Enums are sent as **strings**: `"GOAL"`, `"MINOR"`, `"SCHEDULED"`
+- User references are always **String keycloakId** (UUID format)
+
+### 8.4 Error Handling
+All services return consistent error responses:
+```json
+{
+  "status": 404,
+  "message": "Resource not found with id: 123",
+  "timestamp": "2025-03-15T10:30:00"
+}
+```
+
+HTTP Status Codes:
+- `201 Created` - resource created successfully
+- `200 OK` - read/update successful
+- `204 No Content` - delete successful
+- `400 Bad Request` - validation error
+- `401 Unauthorized` - missing or invalid JWT token
+- `403 Forbidden` - user doesn't have required role
+- `404 Not Found` - resource not found
+- `500 Internal Server Error` - unexpected server error
+
+### 8.5 Role-Based UI Visibility
+Show/hide menu items and buttons based on the user's role from the JWT token:
+
+| Feature Area | Roles That Can Access |
+|-------------|----------------------|
+| User Management | ADMIN |
+| Player Profiles | ADMIN, TEAM_MANAGER, HEAD_COACH, SPORT_MANAGER |
+| Contracts & Transfers | ADMIN, SPORT_MANAGER, TEAM_MANAGER |
+| Training Management | ADMIN, HEAD_COACH, ASSISTANT_COACH, FITNESS_COACH |
+| Match Management | ADMIN, TEAM_MANAGER, HEAD_COACH |
+| Medical & Fitness | ADMIN, DOCTOR, PHYSIOTHERAPIST, FITNESS_COACH |
+| Reports & Analytics | ADMIN, PERFORMANCE_ANALYST, HEAD_COACH, TEAM_MANAGER |
+| Scouting | ADMIN, SCOUT, SPORT_MANAGER |
+| Sponsorship | ADMIN, SPONSOR, SPORT_MANAGER |
+| Notifications | ALL AUTHENTICATED (own notifications) |
+| Messages | ADMIN, TEAM_MANAGER, HEAD_COACH, SPORT_MANAGER, DOCTOR |
+| Alerts | ADMIN, TEAM_MANAGER, HEAD_COACH, DOCTOR |
+
+### 8.6 Notification Polling
+- Poll `GET /notifications/recipient/{keycloakId}/unread` periodically for notification badge count
+- Poll `GET /alerts/unacknowledged` for alert indicators
+- Consider WebSocket implementation for real-time updates (future enhancement)
+
+---
+
+**Document Version:** 2.0
+**Last Updated:** 2025
+**Prepared for:** Frontend Development Team & UI/UX Design Team
