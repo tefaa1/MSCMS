@@ -43,15 +43,15 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        updateRequest = new UserUpdateRequest(
-                "John",
-                "Doe",
-                30,
-                "john.doe@example.com",
-                "+1234567890",
-                "123 Main St",
-                Gender.MALE
-        );
+        updateRequest = UserUpdateRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .age(30)
+                .email("john.doe@example.com")
+                .phone("+1234567890")
+                .address("123 Main St")
+                .gender(Gender.MALE)
+                .build();
 
         response = UserResponse.builder()
                 .id(1L)
@@ -69,7 +69,6 @@ class UserControllerTest {
                 .build();
 
         passwordUpdateRequest = new PasswordUpdateRequest(
-                "oldPassword123",
                 "newPassword123"
         );
 

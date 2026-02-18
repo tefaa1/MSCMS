@@ -1,12 +1,12 @@
 package com.example.usermanagementservice.controller;
 
-import com.example.usermanagementservice.dto.request.teamManagerReq.AssignStaffRequest;
-import com.example.usermanagementservice.dto.request.teamManagerReq.TeamManagerRequest;
+import com.example.usermanagementservice.dto.request.teamMangerReq.AssignStaffRequest;
+import com.example.usermanagementservice.dto.request.teamMangerReq.TeamManagerRequest;
 import com.example.usermanagementservice.dto.response.ApiResponse;
 import com.example.usermanagementservice.dto.response.teamManagerRes.TeamManagerResponse;
 import com.example.usermanagementservice.dto.update.teamManagerUp.TeamManagerUpdateRequest;
 import com.example.usermanagementservice.model.enums.Gender;
-import com.example.usermanagementservice.service.teamManager.TeamManagerService;
+import com.example.usermanagementservice.service.teamManagerService.TeamManagerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -18,7 +18,6 @@ public interface SportManagerMapper {
     @Mapping(target = "teamManagerSet", ignore = true)
     SportManager toEntity(SportManagerRequest request);
 
-    @Mapping(source = "sportManager.id", target = "sportManagerId")
     SportManagerResponse toResponse(SportManager sportManager);
 
     List<SportManagerResponse> toResponseList(List<SportManager> sportManagers);

@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -34,45 +33,30 @@ class ScoutReportControllerTest {
         ScoutReportRequest request = new ScoutReportRequest(
                 "scout-keycloak-id-1",
                 100L,
-                200L,
-                "John Doe",
-                25,
-                "Forward",
-                "England",
-                LocalDate.of(2025, 1, 15),
-                85,
-                80,
-                88,
-                75,
-                82.0,
+                8,
+                7,
+                9,
+                7,
                 "Excellent pace and finishing",
                 "Needs to improve heading",
                 "Highly recommended",
-                "Very promising player",
-                5000000L
+                true,
+                LocalDateTime.of(2025, 1, 15, 10, 0)
         );
 
         ScoutReportResponse response = new ScoutReportResponse(
                 1L,
                 "scout-keycloak-id-1",
                 100L,
-                200L,
-                "John Doe",
-                25,
-                "Forward",
-                "England",
-                LocalDate.of(2025, 1, 15),
-                85,
-                80,
-                88,
-                75,
-                82.0,
+                8,
+                7,
+                9,
+                7,
                 "Excellent pace and finishing",
                 "Needs to improve heading",
                 "Highly recommended",
-                "Very promising player",
-                5000000L,
-                LocalDateTime.now()
+                true,
+                LocalDateTime.of(2025, 1, 15, 10, 0)
         );
 
         given(scoutReportService.create(request)).willReturn(response);
@@ -84,8 +68,8 @@ class ScoutReportControllerTest {
         assertThat(result.getStatusCodeValue()).isEqualTo(201);
         assertThat(result.getBody()).isNotNull();
         assertThat(result.getBody().id()).isEqualTo(1L);
-        assertThat(result.getBody().playerName()).isEqualTo("John Doe");
-        assertThat(result.getBody().overallRating()).isEqualTo(82.0);
+        assertThat(result.getBody().scoutKeycloakId()).isEqualTo("scout-keycloak-id-1");
+        assertThat(result.getBody().outerPlayerId()).isEqualTo(100L);
         verify(scoutReportService, times(1)).create(request);
     }
 
@@ -96,45 +80,30 @@ class ScoutReportControllerTest {
         ScoutReportRequest request = new ScoutReportRequest(
                 "scout-keycloak-id-1",
                 100L,
-                200L,
-                "John Doe",
-                25,
-                "Forward",
-                "England",
-                LocalDate.of(2025, 1, 15),
-                88,
-                85,
-                90,
-                80,
-                85.5,
+                9,
+                8,
+                9,
+                8,
                 "Outstanding pace and finishing",
                 "Heading improved significantly",
                 "Strongly recommended",
-                "Exceptional talent",
-                7000000L
+                true,
+                LocalDateTime.of(2025, 1, 16, 10, 0)
         );
 
         ScoutReportResponse response = new ScoutReportResponse(
                 1L,
                 "scout-keycloak-id-1",
                 100L,
-                200L,
-                "John Doe",
-                25,
-                "Forward",
-                "England",
-                LocalDate.of(2025, 1, 15),
-                88,
-                85,
-                90,
-                80,
-                85.5,
+                9,
+                8,
+                9,
+                8,
                 "Outstanding pace and finishing",
                 "Heading improved significantly",
                 "Strongly recommended",
-                "Exceptional talent",
-                7000000L,
-                LocalDateTime.now()
+                true,
+                LocalDateTime.of(2025, 1, 16, 10, 0)
         );
 
         given(scoutReportService.update(id, request)).willReturn(response);
@@ -146,7 +115,7 @@ class ScoutReportControllerTest {
         assertThat(result.getStatusCodeValue()).isEqualTo(200);
         assertThat(result.getBody()).isNotNull();
         assertThat(result.getBody().id()).isEqualTo(1L);
-        assertThat(result.getBody().overallRating()).isEqualTo(85.5);
+        assertThat(result.getBody().technicalRating()).isEqualTo(9);
         verify(scoutReportService, times(1)).update(id, request);
     }
 
@@ -158,23 +127,15 @@ class ScoutReportControllerTest {
                 1L,
                 "scout-keycloak-id-1",
                 100L,
-                200L,
-                "John Doe",
-                25,
-                "Forward",
-                "England",
-                LocalDate.of(2025, 1, 15),
-                85,
-                80,
-                88,
-                75,
-                82.0,
+                8,
+                7,
+                9,
+                7,
                 "Excellent pace and finishing",
                 "Needs to improve heading",
                 "Highly recommended",
-                "Very promising player",
-                5000000L,
-                LocalDateTime.now()
+                true,
+                LocalDateTime.of(2025, 1, 15, 10, 0)
         );
 
         given(scoutReportService.getById(id)).willReturn(response);
@@ -196,46 +157,30 @@ class ScoutReportControllerTest {
                 1L,
                 "scout-keycloak-id-1",
                 100L,
-                200L,
-                "John Doe",
-                25,
-                "Forward",
-                "England",
-                LocalDate.of(2025, 1, 15),
-                85,
-                80,
-                88,
-                75,
-                82.0,
+                8,
+                7,
+                9,
+                7,
                 "Excellent pace and finishing",
                 "Needs to improve heading",
                 "Highly recommended",
-                "Very promising player",
-                5000000L,
-                LocalDateTime.now()
+                true,
+                LocalDateTime.of(2025, 1, 15, 10, 0)
         );
 
         ScoutReportResponse response2 = new ScoutReportResponse(
                 2L,
                 "scout-keycloak-id-2",
                 101L,
-                201L,
-                "Jane Smith",
-                23,
-                "Midfielder",
-                "Spain",
-                LocalDate.of(2025, 1, 20),
-                80,
-                90,
-                75,
-                85,
-                82.5,
+                7,
+                8,
+                7,
+                9,
                 "Excellent vision and passing",
                 "Needs to improve physicality",
                 "Recommended",
-                "Great potential",
-                4500000L,
-                LocalDateTime.now()
+                true,
+                LocalDateTime.of(2025, 1, 20, 10, 0)
         );
 
         List<ScoutReportResponse> responses = Arrays.asList(response1, response2);

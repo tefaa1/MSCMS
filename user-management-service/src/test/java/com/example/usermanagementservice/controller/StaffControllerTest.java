@@ -63,7 +63,6 @@ class StaffControllerTest {
         updateRequest.setFirstName("Jane");
         updateRequest.setLastName("Staff");
         updateRequest.setAge(35);
-        updateRequest.setEmail("staff1@example.com");
         updateRequest.setPhone("+1234567890");
         updateRequest.setAddress("456 Staff St");
         updateRequest.setGender(Gender.FEMALE);
@@ -87,7 +86,7 @@ class StaffControllerTest {
                 .build();
 
         statsResponse = new StaffStatsResponse(
-                StaffRole.HEAD_COACH,
+                StaffRole.HEAD_COACH.name(),
                 5L
         );
     }

@@ -1,6 +1,7 @@
 package com.example.usermanagementservice.model.enums;
 
 public enum Role {
+    ADMIN,
     PLAYER,
     SPONSOR,
     SCOUT,

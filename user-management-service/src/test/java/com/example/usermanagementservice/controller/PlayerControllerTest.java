@@ -67,7 +67,6 @@ class PlayerControllerTest {
         updateRequest.setFirstName("John");
         updateRequest.setLastName("Player");
         updateRequest.setAge(25);
-        updateRequest.setEmail("player1@example.com");
         updateRequest.setPhone("+1234567890");
         updateRequest.setAddress("123 Player St");
         updateRequest.setGender(Gender.MALE);

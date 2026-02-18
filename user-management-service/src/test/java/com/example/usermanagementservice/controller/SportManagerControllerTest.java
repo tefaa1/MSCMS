@@ -143,7 +143,7 @@ class SportManagerControllerTest {
                 .firstName("Team")
                 .lastName("Manager")
                 .build();
-        given(sportManagerService.getTeamManagers(id)).willReturn(List.of(tmResponse));
+        given(sportManagerService.getTeamManagersBySportManager(id)).willReturn(List.of(tmResponse));
 
         ResponseEntity<ApiResponse<List<TeamManagerResponse>>> result = controller.getTeamManagers(id);
 
@@ -151,6 +151,6 @@ class SportManagerControllerTest {
         assertThat(result.getBody()).isNotNull();
         assertThat(result.getBody().isSuccess()).isTrue();
         assertThat(result.getBody().getData()).containsExactly(tmResponse);
-        verify(sportManagerService).getTeamManagers(id);
+        verify(sportManagerService).getTeamManagersBySportManager(id);
     }
 }

@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -32,36 +33,43 @@ class PlayerAnalyticsControllerTest {
         // Given
         PlayerAnalyticsRequest request = new PlayerAnalyticsRequest(
                 "player-keycloak-id-1",
-                "analyst-keycloak-id-1",
-                "2025/2026",
+                1L,
+                LocalDate.of(2025, 1, 1),
+                LocalDate.of(2025, 12, 31),
                 25,
                 10,
                 5,
                 7.5,
                 80,
-                95.0,
+                95,
                 2,
                 85.5,
+                10,
+                "KPI data",
                 "Improving",
-                "KPI data"
+                LocalDateTime.of(2025, 1, 15, 10, 0),
+                "Good analytics"
         );
 
         PlayerAnalyticsResponse response = new PlayerAnalyticsResponse(
                 1L,
                 "player-keycloak-id-1",
-                "analyst-keycloak-id-1",
-                "2025/2026",
+                1L,
+                LocalDate.of(2025, 1, 1),
+                LocalDate.of(2025, 12, 31),
                 25,
                 10,
                 5,
                 7.5,
                 80,
-                95.0,
+                95,
                 2,
                 85.5,
-                "Improving",
+                10,
                 "KPI data",
-                LocalDateTime.now()
+                "Improving",
+                LocalDateTime.of(2025, 1, 15, 10, 0),
+                "Good analytics"
         );
 
         given(playerAnalyticsService.create(request)).willReturn(response);
@@ -74,7 +82,7 @@ class PlayerAnalyticsControllerTest {
         assertThat(result.getBody()).isNotNull();
         assertThat(result.getBody().id()).isEqualTo(1L);
         assertThat(result.getBody().playerKeycloakId()).isEqualTo("player-keycloak-id-1");
-        assertThat(result.getBody().season()).isEqualTo("2025/2026");
+        assertThat(result.getBody().teamId()).isEqualTo(1L);
         verify(playerAnalyticsService, times(1)).create(request);
     }
 
@@ -84,36 +92,43 @@ class PlayerAnalyticsControllerTest {
         Long id = 1L;
         PlayerAnalyticsRequest request = new PlayerAnalyticsRequest(
                 "player-keycloak-id-1",
-                "analyst-keycloak-id-1",
-                "2025/2026",
+                1L,
+                LocalDate.of(2025, 1, 1),
+                LocalDate.of(2025, 12, 31),
                 30,
                 12,
                 8,
                 8.0,
                 90,
-                97.5,
+                97,
                 1,
                 88.0,
+                12,
+                "Updated KPI data",
                 "Excellent",
-                "Updated KPI data"
+                LocalDateTime.of(2025, 1, 16, 10, 0),
+                "Updated analytics"
         );
 
         PlayerAnalyticsResponse response = new PlayerAnalyticsResponse(
                 1L,
                 "player-keycloak-id-1",
-                "analyst-keycloak-id-1",
-                "2025/2026",
+                1L,
+                LocalDate.of(2025, 1, 1),
+                LocalDate.of(2025, 12, 31),
                 30,
                 12,
                 8,
                 8.0,
                 90,
-                97.5,
+                97,
                 1,
                 88.0,
-                "Excellent",
+                12,
                 "Updated KPI data",
-                LocalDateTime.now()
+                "Excellent",
+                LocalDateTime.of(2025, 1, 16, 10, 0),
+                "Updated analytics"
         );
 
         given(playerAnalyticsService.update(id, request)).willReturn(response);
@@ -125,7 +140,7 @@ class PlayerAnalyticsControllerTest {
         assertThat(result.getStatusCodeValue()).isEqualTo(200);
         assertThat(result.getBody()).isNotNull();
         assertThat(result.getBody().id()).isEqualTo(1L);
-        assertThat(result.getBody().matchesPlayed()).isEqualTo(30);
+        assertThat(result.getBody().totalMatches()).isEqualTo(30);
         verify(playerAnalyticsService, times(1)).update(id, request);
     }
 
@@ -136,19 +151,22 @@ class PlayerAnalyticsControllerTest {
         PlayerAnalyticsResponse response = new PlayerAnalyticsResponse(
                 1L,
                 "player-keycloak-id-1",
-                "analyst-keycloak-id-1",
-                "2025/2026",
+                1L,
+                LocalDate.of(2025, 1, 1),
+                LocalDate.of(2025, 12, 31),
                 25,
                 10,
                 5,
                 7.5,
                 80,
-                95.0,
+                95,
                 2,
                 85.5,
-                "Improving",
+                10,
                 "KPI data",
-                LocalDateTime.now()
+                "Improving",
+                LocalDateTime.of(2025, 1, 15, 10, 0),
+                "Good analytics"
         );
 
         given(playerAnalyticsService.getById(id)).willReturn(response);
@@ -169,37 +187,43 @@ class PlayerAnalyticsControllerTest {
         PlayerAnalyticsResponse response1 = new PlayerAnalyticsResponse(
                 1L,
                 "player-keycloak-id-1",
-                "analyst-keycloak-id-1",
-                "2025/2026",
+                1L,
+                LocalDate.of(2025, 1, 1),
+                LocalDate.of(2025, 12, 31),
                 25,
                 10,
                 5,
                 7.5,
                 80,
-                95.0,
+                95,
                 2,
                 85.5,
-                "Improving",
+                10,
                 "KPI data",
-                LocalDateTime.now()
+                "Improving",
+                LocalDateTime.of(2025, 1, 15, 10, 0),
+                "Good analytics"
         );
 
         PlayerAnalyticsResponse response2 = new PlayerAnalyticsResponse(
                 2L,
                 "player-keycloak-id-2",
-                "analyst-keycloak-id-2",
-                "2025/2026",
+                2L,
+                LocalDate.of(2025, 1, 1),
+                LocalDate.of(2025, 12, 31),
                 28,
                 15,
                 7,
                 8.2,
                 85,
-                98.0,
+                98,
                 1,
                 90.0,
-                "Excellent",
+                15,
                 "KPI data 2",
-                LocalDateTime.now()
+                "Excellent",
+                LocalDateTime.of(2025, 1, 20, 10, 0),
+                "Great analytics"
         );
 
         List<PlayerAnalyticsResponse> responses = Arrays.asList(response1, response2);

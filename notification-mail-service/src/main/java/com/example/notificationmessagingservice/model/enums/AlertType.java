@@ -1,6 +1,7 @@
 package com.example.notificationmessagingservice.model.enums;
 
 public enum AlertType {
+    SYSTEM,
     INJURY_REPORTED,
     KPI_DROP,
     TRANSFER_COMPLETED,

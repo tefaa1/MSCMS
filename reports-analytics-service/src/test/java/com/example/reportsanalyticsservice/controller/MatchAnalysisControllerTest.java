@@ -32,46 +32,45 @@ class MatchAnalysisControllerTest {
         // Given
         MatchAnalysisRequest request = new MatchAnalysisRequest(
                 1L,
-                "analyst-keycloak-id-1",
+                1L,
                 55,
                 12,
                 8,
                 450,
-                85.5,
+                85,
                 25,
                 10,
-                5,
-                2,
-                2,
-                0,
+                "heatmap/team1/match1.png",
+                "POSSESSION",
                 "Key moments data",
                 "Tactical analysis data",
                 "Player ratings data",
-                "Heatmap data",
-                "POSSESSION"
+                "analyst-keycloak-id-1",
+                LocalDateTime.of(2025, 1, 15, 10, 0),
+                "Good match analysis",
+                null
         );
 
         MatchAnalysisResponse response = new MatchAnalysisResponse(
                 1L,
                 1L,
-                "analyst-keycloak-id-1",
+                1L,
                 55,
                 12,
                 8,
                 450,
-                85.5,
+                85,
                 25,
                 10,
-                5,
-                2,
-                2,
-                0,
+                "heatmap/team1/match1.png",
+                "POSSESSION",
                 "Key moments data",
                 "Tactical analysis data",
                 "Player ratings data",
-                "Heatmap data",
-                "POSSESSION",
-                LocalDateTime.now()
+                "analyst-keycloak-id-1",
+                LocalDateTime.of(2025, 1, 15, 10, 0),
+                "Good match analysis",
+                null
         );
 
         given(matchAnalysisService.create(request)).willReturn(response);
@@ -94,46 +93,45 @@ class MatchAnalysisControllerTest {
         Long id = 1L;
         MatchAnalysisRequest request = new MatchAnalysisRequest(
                 1L,
-                "analyst-keycloak-id-1",
+                1L,
                 60,
                 15,
                 10,
                 500,
-                88.0,
+                88,
                 30,
                 8,
-                6,
-                1,
-                3,
-                1,
+                "heatmap/team1/match1_updated.png",
+                "SHOTS",
                 "Updated key moments",
                 "Updated tactical analysis",
                 "Updated player ratings",
-                "Updated heatmap data",
-                "SHOTS"
+                "analyst-keycloak-id-1",
+                LocalDateTime.of(2025, 1, 16, 10, 0),
+                "Updated match analysis",
+                null
         );
 
         MatchAnalysisResponse response = new MatchAnalysisResponse(
                 1L,
                 1L,
-                "analyst-keycloak-id-1",
+                1L,
                 60,
                 15,
                 10,
                 500,
-                88.0,
+                88,
                 30,
                 8,
-                6,
-                1,
-                3,
-                1,
+                "heatmap/team1/match1_updated.png",
+                "SHOTS",
                 "Updated key moments",
                 "Updated tactical analysis",
                 "Updated player ratings",
-                "Updated heatmap data",
-                "SHOTS",
-                LocalDateTime.now()
+                "analyst-keycloak-id-1",
+                LocalDateTime.of(2025, 1, 16, 10, 0),
+                "Updated match analysis",
+                null
         );
 
         given(matchAnalysisService.update(id, request)).willReturn(response);
@@ -156,24 +154,23 @@ class MatchAnalysisControllerTest {
         MatchAnalysisResponse response = new MatchAnalysisResponse(
                 1L,
                 1L,
-                "analyst-keycloak-id-1",
+                1L,
                 55,
                 12,
                 8,
                 450,
-                85.5,
+                85,
                 25,
                 10,
-                5,
-                2,
-                2,
-                0,
+                "heatmap/team1/match1.png",
+                "POSSESSION",
                 "Key moments data",
                 "Tactical analysis data",
                 "Player ratings data",
-                "Heatmap data",
-                "POSSESSION",
-                LocalDateTime.now()
+                "analyst-keycloak-id-1",
+                LocalDateTime.of(2025, 1, 15, 10, 0),
+                "Good match analysis",
+                null
         );
 
         given(matchAnalysisService.getById(id)).willReturn(response);
@@ -194,47 +191,45 @@ class MatchAnalysisControllerTest {
         MatchAnalysisResponse response1 = new MatchAnalysisResponse(
                 1L,
                 1L,
-                "analyst-keycloak-id-1",
+                1L,
                 55,
                 12,
                 8,
                 450,
-                85.5,
+                85,
                 25,
                 10,
-                5,
-                2,
-                2,
-                0,
+                "heatmap/team1/match1.png",
+                "POSSESSION",
                 "Key moments data",
                 "Tactical analysis data",
                 "Player ratings data",
-                "Heatmap data",
-                "POSSESSION",
-                LocalDateTime.now()
+                "analyst-keycloak-id-1",
+                LocalDateTime.of(2025, 1, 15, 10, 0),
+                "Good match analysis",
+                null
         );
 
         MatchAnalysisResponse response2 = new MatchAnalysisResponse(
                 2L,
                 2L,
-                "analyst-keycloak-id-2",
+                2L,
                 45,
                 10,
                 5,
                 380,
-                78.0,
+                78,
                 20,
                 15,
-                4,
-                3,
-                1,
-                1,
+                "heatmap/team2/match2.png",
+                "PASSES",
                 "Key moments data 2",
                 "Tactical analysis data 2",
                 "Player ratings data 2",
-                "Heatmap data 2",
-                "PASSES",
-                LocalDateTime.now()
+                "analyst-keycloak-id-2",
+                LocalDateTime.of(2025, 1, 20, 10, 0),
+                "Match analysis 2",
+                null
         );
 
         List<MatchAnalysisResponse> responses = Arrays.asList(response1, response2);

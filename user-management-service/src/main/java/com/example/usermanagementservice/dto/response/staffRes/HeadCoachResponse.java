@@ -1,6 +1,7 @@
 package com.example.usermanagementservice.dto.response.staffRes;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
@@ -8,7 +9,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class HeadCoachResponse extends StaffMemberResponse {
     private Integer yearsOfExperience;
     private String coachingLicenseLevel;

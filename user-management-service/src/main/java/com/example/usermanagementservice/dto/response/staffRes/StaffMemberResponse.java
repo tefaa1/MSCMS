@@ -4,13 +4,14 @@ package com.example.usermanagementservice.dto.response.staffRes;
 import com.example.usermanagementservice.model.enums.Gender;
 import com.example.usermanagementservice.model.enums.StaffRole;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class StaffMemberResponse {
     private Long id;
     private String keycloakId;

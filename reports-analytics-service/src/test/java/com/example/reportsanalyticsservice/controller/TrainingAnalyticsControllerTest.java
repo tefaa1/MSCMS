@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -33,31 +34,38 @@ class TrainingAnalyticsControllerTest {
         TrainingAnalyticsRequest request = new TrainingAnalyticsRequest(
                 1L,
                 "analyst-keycloak-id-1",
-                "2025/2026",
+                LocalDate.of(2025, 8, 1),
+                LocalDate.of(2025, 10, 31),
                 150,
-                92.5,
-                90.0,
-                "Technical: 60, Tactical: 50, Physical: 40",
-                "High: 30%, Medium: 50%, Low: 20%",
+                138,
+                12,
+                92.0,
+                7.5,
+                8.2,
+                3,
+                "KPI data",
                 "Overall improvement observed",
-                "Low correlation with injuries",
-                "Increase high-intensity sessions"
+                LocalDateTime.of(2025, 11, 1, 10, 0),
+                "Good training analytics"
         );
 
         TrainingAnalyticsResponse response = new TrainingAnalyticsResponse(
                 1L,
                 1L,
                 "analyst-keycloak-id-1",
-                "2025/2026",
+                LocalDate.of(2025, 8, 1),
+                LocalDate.of(2025, 10, 31),
                 150,
-                92.5,
-                90.0,
-                "Technical: 60, Tactical: 50, Physical: 40",
-                "High: 30%, Medium: 50%, Low: 20%",
+                138,
+                12,
+                92.0,
+                7.5,
+                8.2,
+                3,
+                "KPI data",
                 "Overall improvement observed",
-                "Low correlation with injuries",
-                "Increase high-intensity sessions",
-                LocalDateTime.now()
+                LocalDateTime.of(2025, 11, 1, 10, 0),
+                "Good training analytics"
         );
 
         given(trainingAnalyticsService.create(request)).willReturn(response);
@@ -70,7 +78,7 @@ class TrainingAnalyticsControllerTest {
         assertThat(result.getBody()).isNotNull();
         assertThat(result.getBody().id()).isEqualTo(1L);
         assertThat(result.getBody().teamId()).isEqualTo(1L);
-        assertThat(result.getBody().season()).isEqualTo("2025/2026");
+        assertThat(result.getBody().totalSessions()).isEqualTo(150);
         verify(trainingAnalyticsService, times(1)).create(request);
     }
 
@@ -81,31 +89,38 @@ class TrainingAnalyticsControllerTest {
         TrainingAnalyticsRequest request = new TrainingAnalyticsRequest(
                 1L,
                 "analyst-keycloak-id-1",
-                "2025/2026",
+                LocalDate.of(2025, 8, 1),
+                LocalDate.of(2025, 10, 31),
                 160,
-                94.0,
-                92.5,
-                "Technical: 65, Tactical: 55, Physical: 40",
-                "High: 35%, Medium: 50%, Low: 15%",
+                150,
+                10,
+                93.75,
+                7.8,
+                8.5,
+                2,
+                "Updated KPI data",
                 "Significant improvement in technical skills",
-                "No significant correlation",
-                "Maintain current training intensity"
+                LocalDateTime.of(2025, 11, 2, 10, 0),
+                "Updated training analytics"
         );
 
         TrainingAnalyticsResponse response = new TrainingAnalyticsResponse(
                 1L,
                 1L,
                 "analyst-keycloak-id-1",
-                "2025/2026",
+                LocalDate.of(2025, 8, 1),
+                LocalDate.of(2025, 10, 31),
                 160,
-                94.0,
-                92.5,
-                "Technical: 65, Tactical: 55, Physical: 40",
-                "High: 35%, Medium: 50%, Low: 15%",
+                150,
+                10,
+                93.75,
+                7.8,
+                8.5,
+                2,
+                "Updated KPI data",
                 "Significant improvement in technical skills",
-                "No significant correlation",
-                "Maintain current training intensity",
-                LocalDateTime.now()
+                LocalDateTime.of(2025, 11, 2, 10, 0),
+                "Updated training analytics"
         );
 
         given(trainingAnalyticsService.update(id, request)).willReturn(response);
@@ -129,16 +144,19 @@ class TrainingAnalyticsControllerTest {
                 1L,
                 1L,
                 "analyst-keycloak-id-1",
-                "2025/2026",
+                LocalDate.of(2025, 8, 1),
+                LocalDate.of(2025, 10, 31),
                 150,
-                92.5,
-                90.0,
-                "Technical: 60, Tactical: 50, Physical: 40",
-                "High: 30%, Medium: 50%, Low: 20%",
+                138,
+                12,
+                92.0,
+                7.5,
+                8.2,
+                3,
+                "KPI data",
                 "Overall improvement observed",
-                "Low correlation with injuries",
-                "Increase high-intensity sessions",
-                LocalDateTime.now()
+                LocalDateTime.of(2025, 11, 1, 10, 0),
+                "Good training analytics"
         );
 
         given(trainingAnalyticsService.getById(id)).willReturn(response);
@@ -160,32 +178,38 @@ class TrainingAnalyticsControllerTest {
                 1L,
                 1L,
                 "analyst-keycloak-id-1",
-                "2025/2026",
+                LocalDate.of(2025, 8, 1),
+                LocalDate.of(2025, 10, 31),
                 150,
-                92.5,
-                90.0,
-                "Technical: 60, Tactical: 50, Physical: 40",
-                "High: 30%, Medium: 50%, Low: 20%",
+                138,
+                12,
+                92.0,
+                7.5,
+                8.2,
+                3,
+                "KPI data",
                 "Overall improvement observed",
-                "Low correlation with injuries",
-                "Increase high-intensity sessions",
-                LocalDateTime.now()
+                LocalDateTime.of(2025, 11, 1, 10, 0),
+                "Good training analytics"
         );
 
         TrainingAnalyticsResponse response2 = new TrainingAnalyticsResponse(
                 2L,
                 2L,
                 "analyst-keycloak-id-2",
-                "2025/2026",
+                LocalDate.of(2025, 8, 1),
+                LocalDate.of(2025, 10, 31),
                 140,
-                88.0,
-                85.0,
-                "Technical: 55, Tactical: 45, Physical: 40",
-                "High: 25%, Medium: 55%, Low: 20%",
+                125,
+                15,
+                89.29,
+                7.2,
+                7.8,
+                5,
+                "KPI data 2",
                 "Moderate improvement",
-                "Moderate correlation with injuries",
-                "Focus on injury prevention",
-                LocalDateTime.now()
+                LocalDateTime.of(2025, 11, 1, 10, 0),
+                "Moderate training analytics"
         );
 
         List<TrainingAnalyticsResponse> responses = Arrays.asList(response1, response2);

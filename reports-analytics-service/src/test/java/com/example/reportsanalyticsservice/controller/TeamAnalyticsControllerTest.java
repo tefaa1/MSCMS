@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -32,42 +33,41 @@ class TeamAnalyticsControllerTest {
         // Given
         TeamAnalyticsRequest request = new TeamAnalyticsRequest(
                 1L,
-                "analyst-keycloak-id-1",
-                "2025/2026",
+                LocalDate.of(2025, 8, 1),
+                LocalDate.of(2026, 5, 31),
                 38,
                 25,
                 8,
                 5,
                 75,
                 30,
-                45,
-                15,
-                58.5,
                 85.0,
+                15,
+                120,
+                "KPI data",
                 "Strong attack and midfield",
-                "Defensive vulnerabilities",
-                "Improving steadily"
+                LocalDateTime.of(2025, 6, 1, 10, 0),
+                "Good team performance"
         );
 
         TeamAnalyticsResponse response = new TeamAnalyticsResponse(
                 1L,
                 1L,
-                "analyst-keycloak-id-1",
-                "2025/2026",
+                LocalDate.of(2025, 8, 1),
+                LocalDate.of(2026, 5, 31),
                 38,
                 25,
                 8,
                 5,
                 75,
                 30,
-                45,
-                15,
-                58.5,
                 85.0,
+                15,
+                120,
+                "KPI data",
                 "Strong attack and midfield",
-                "Defensive vulnerabilities",
-                "Improving steadily",
-                LocalDateTime.now()
+                LocalDateTime.of(2025, 6, 1, 10, 0),
+                "Good team performance"
         );
 
         given(teamAnalyticsService.create(request)).willReturn(response);
@@ -80,7 +80,7 @@ class TeamAnalyticsControllerTest {
         assertThat(result.getBody()).isNotNull();
         assertThat(result.getBody().id()).isEqualTo(1L);
         assertThat(result.getBody().teamId()).isEqualTo(1L);
-        assertThat(result.getBody().season()).isEqualTo("2025/2026");
+        assertThat(result.getBody().totalMatches()).isEqualTo(38);
         verify(teamAnalyticsService, times(1)).create(request);
     }
 
@@ -90,42 +90,41 @@ class TeamAnalyticsControllerTest {
         Long id = 1L;
         TeamAnalyticsRequest request = new TeamAnalyticsRequest(
                 1L,
-                "analyst-keycloak-id-1",
-                "2025/2026",
+                LocalDate.of(2025, 8, 1),
+                LocalDate.of(2026, 5, 31),
                 40,
                 28,
                 7,
                 5,
                 82,
                 28,
-                54,
-                18,
-                60.0,
                 87.5,
+                18,
+                130,
+                "Updated KPI data",
                 "Excellent attack and improved defense",
-                "Occasional lapses in concentration",
-                "Strong upward trend"
+                LocalDateTime.of(2025, 6, 2, 10, 0),
+                "Strong team performance"
         );
 
         TeamAnalyticsResponse response = new TeamAnalyticsResponse(
                 1L,
                 1L,
-                "analyst-keycloak-id-1",
-                "2025/2026",
+                LocalDate.of(2025, 8, 1),
+                LocalDate.of(2026, 5, 31),
                 40,
                 28,
                 7,
                 5,
                 82,
                 28,
-                54,
-                18,
-                60.0,
                 87.5,
+                18,
+                130,
+                "Updated KPI data",
                 "Excellent attack and improved defense",
-                "Occasional lapses in concentration",
-                "Strong upward trend",
-                LocalDateTime.now()
+                LocalDateTime.of(2025, 6, 2, 10, 0),
+                "Strong team performance"
         );
 
         given(teamAnalyticsService.update(id, request)).willReturn(response);
@@ -148,22 +147,21 @@ class TeamAnalyticsControllerTest {
         TeamAnalyticsResponse response = new TeamAnalyticsResponse(
                 1L,
                 1L,
-                "analyst-keycloak-id-1",
-                "2025/2026",
+                LocalDate.of(2025, 8, 1),
+                LocalDate.of(2026, 5, 31),
                 38,
                 25,
                 8,
                 5,
                 75,
                 30,
-                45,
-                15,
-                58.5,
                 85.0,
+                15,
+                120,
+                "KPI data",
                 "Strong attack and midfield",
-                "Defensive vulnerabilities",
-                "Improving steadily",
-                LocalDateTime.now()
+                LocalDateTime.of(2025, 6, 1, 10, 0),
+                "Good team performance"
         );
 
         given(teamAnalyticsService.getById(id)).willReturn(response);
@@ -184,43 +182,41 @@ class TeamAnalyticsControllerTest {
         TeamAnalyticsResponse response1 = new TeamAnalyticsResponse(
                 1L,
                 1L,
-                "analyst-keycloak-id-1",
-                "2025/2026",
+                LocalDate.of(2025, 8, 1),
+                LocalDate.of(2026, 5, 31),
                 38,
                 25,
                 8,
                 5,
                 75,
                 30,
-                45,
-                15,
-                58.5,
                 85.0,
+                15,
+                120,
+                "KPI data",
                 "Strong attack and midfield",
-                "Defensive vulnerabilities",
-                "Improving steadily",
-                LocalDateTime.now()
+                LocalDateTime.of(2025, 6, 1, 10, 0),
+                "Good team performance"
         );
 
         TeamAnalyticsResponse response2 = new TeamAnalyticsResponse(
                 2L,
                 2L,
-                "analyst-keycloak-id-2",
-                "2025/2026",
+                LocalDate.of(2025, 8, 1),
+                LocalDate.of(2026, 5, 31),
                 38,
                 20,
                 10,
                 8,
                 60,
                 35,
-                25,
-                12,
-                52.0,
                 82.0,
+                12,
+                110,
+                "KPI data 2",
                 "Solid defense",
-                "Lacks attacking power",
-                "Stable performance",
-                LocalDateTime.now()
+                LocalDateTime.of(2025, 6, 1, 10, 0),
+                "Stable performance"
         );
 
         List<TeamAnalyticsResponse> responses = Arrays.asList(response1, response2);

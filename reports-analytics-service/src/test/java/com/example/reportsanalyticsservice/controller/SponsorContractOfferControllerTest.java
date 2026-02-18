@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -33,34 +32,27 @@ class SponsorContractOfferControllerTest {
         // Given
         SponsorContractOfferRequest request = new SponsorContractOfferRequest(
                 "sponsor-keycloak-id-1",
-                "Nike",
-                "Kit Sponsorship Deal",
-                "Exclusive kit sponsorship for 3 years",
-                5000000L,
-                LocalDate.of(2025, 7, 1),
-                LocalDate.of(2028, 6, 30),
-                "KIT",
-                "PENDING",
+                1L,
+                5000000.0,
+                36,
                 "Standard terms and conditions",
-                "Brand visibility, marketing rights",
-                1L
+                "PENDING",
+                LocalDateTime.of(2025, 7, 1, 0, 0),
+                null,
+                "Exclusive kit sponsorship for 3 years"
         );
 
         SponsorContractOfferResponse response = new SponsorContractOfferResponse(
                 1L,
                 "sponsor-keycloak-id-1",
-                "Nike",
-                "Kit Sponsorship Deal",
-                "Exclusive kit sponsorship for 3 years",
-                5000000L,
-                LocalDate.of(2025, 7, 1),
-                LocalDate.of(2028, 6, 30),
-                "KIT",
-                "PENDING",
-                "Standard terms and conditions",
-                "Brand visibility, marketing rights",
                 1L,
-                LocalDateTime.now()
+                5000000.0,
+                36,
+                "Standard terms and conditions",
+                "PENDING",
+                LocalDateTime.of(2025, 7, 1, 0, 0),
+                null,
+                "Exclusive kit sponsorship for 3 years"
         );
 
         given(sponsorContractOfferService.create(request)).willReturn(response);
@@ -72,8 +64,8 @@ class SponsorContractOfferControllerTest {
         assertThat(result.getStatusCodeValue()).isEqualTo(201);
         assertThat(result.getBody()).isNotNull();
         assertThat(result.getBody().id()).isEqualTo(1L);
-        assertThat(result.getBody().sponsorName()).isEqualTo("Nike");
-        assertThat(result.getBody().contractValue()).isEqualTo(5000000L);
+        assertThat(result.getBody().sponsorKeycloakId()).isEqualTo("sponsor-keycloak-id-1");
+        assertThat(result.getBody().offerAmount()).isEqualTo(5000000.0);
         verify(sponsorContractOfferService, times(1)).create(request);
     }
 
@@ -83,34 +75,27 @@ class SponsorContractOfferControllerTest {
         Long id = 1L;
         SponsorContractOfferRequest request = new SponsorContractOfferRequest(
                 "sponsor-keycloak-id-1",
-                "Nike",
-                "Kit Sponsorship Deal",
-                "Exclusive kit sponsorship for 3 years",
-                6000000L,
-                LocalDate.of(2025, 7, 1),
-                LocalDate.of(2028, 6, 30),
-                "KIT",
-                "APPROVED",
+                1L,
+                6000000.0,
+                36,
                 "Updated terms and conditions",
-                "Enhanced brand visibility, marketing rights",
-                1L
+                "APPROVED",
+                LocalDateTime.of(2025, 7, 1, 0, 0),
+                LocalDateTime.of(2025, 7, 15, 0, 0),
+                "Enhanced kit sponsorship for 3 years"
         );
 
         SponsorContractOfferResponse response = new SponsorContractOfferResponse(
                 1L,
                 "sponsor-keycloak-id-1",
-                "Nike",
-                "Kit Sponsorship Deal",
-                "Exclusive kit sponsorship for 3 years",
-                6000000L,
-                LocalDate.of(2025, 7, 1),
-                LocalDate.of(2028, 6, 30),
-                "KIT",
-                "APPROVED",
-                "Updated terms and conditions",
-                "Enhanced brand visibility, marketing rights",
                 1L,
-                LocalDateTime.now()
+                6000000.0,
+                36,
+                "Updated terms and conditions",
+                "APPROVED",
+                LocalDateTime.of(2025, 7, 1, 0, 0),
+                LocalDateTime.of(2025, 7, 15, 0, 0),
+                "Enhanced kit sponsorship for 3 years"
         );
 
         given(sponsorContractOfferService.update(id, request)).willReturn(response);
@@ -122,7 +107,7 @@ class SponsorContractOfferControllerTest {
         assertThat(result.getStatusCodeValue()).isEqualTo(200);
         assertThat(result.getBody()).isNotNull();
         assertThat(result.getBody().id()).isEqualTo(1L);
-        assertThat(result.getBody().contractValue()).isEqualTo(6000000L);
+        assertThat(result.getBody().offerAmount()).isEqualTo(6000000.0);
         assertThat(result.getBody().status()).isEqualTo("APPROVED");
         verify(sponsorContractOfferService, times(1)).update(id, request);
     }
@@ -134,18 +119,14 @@ class SponsorContractOfferControllerTest {
         SponsorContractOfferResponse response = new SponsorContractOfferResponse(
                 1L,
                 "sponsor-keycloak-id-1",
-                "Nike",
-                "Kit Sponsorship Deal",
-                "Exclusive kit sponsorship for 3 years",
-                5000000L,
-                LocalDate.of(2025, 7, 1),
-                LocalDate.of(2028, 6, 30),
-                "KIT",
-                "PENDING",
-                "Standard terms and conditions",
-                "Brand visibility, marketing rights",
                 1L,
-                LocalDateTime.now()
+                5000000.0,
+                36,
+                "Standard terms and conditions",
+                "PENDING",
+                LocalDateTime.of(2025, 7, 1, 0, 0),
+                null,
+                "Exclusive kit sponsorship for 3 years"
         );
 
         given(sponsorContractOfferService.getById(id)).willReturn(response);
@@ -166,35 +147,27 @@ class SponsorContractOfferControllerTest {
         SponsorContractOfferResponse response1 = new SponsorContractOfferResponse(
                 1L,
                 "sponsor-keycloak-id-1",
-                "Nike",
-                "Kit Sponsorship Deal",
-                "Exclusive kit sponsorship for 3 years",
-                5000000L,
-                LocalDate.of(2025, 7, 1),
-                LocalDate.of(2028, 6, 30),
-                "KIT",
-                "PENDING",
-                "Standard terms and conditions",
-                "Brand visibility, marketing rights",
                 1L,
-                LocalDateTime.now()
+                5000000.0,
+                36,
+                "Standard terms and conditions",
+                "PENDING",
+                LocalDateTime.of(2025, 7, 1, 0, 0),
+                null,
+                "Exclusive kit sponsorship for 3 years"
         );
 
         SponsorContractOfferResponse response2 = new SponsorContractOfferResponse(
                 2L,
                 "sponsor-keycloak-id-2",
-                "Adidas",
-                "Stadium Naming Rights",
-                "Exclusive stadium naming rights for 5 years",
-                10000000L,
-                LocalDate.of(2025, 8, 1),
-                LocalDate.of(2030, 7, 31),
-                "NAMING_RIGHTS",
-                "APPROVED",
-                "Premium terms and conditions",
-                "Full branding rights, exclusive events",
                 1L,
-                LocalDateTime.now()
+                10000000.0,
+                60,
+                "Premium terms and conditions",
+                "APPROVED",
+                LocalDateTime.of(2025, 8, 1, 0, 0),
+                LocalDateTime.of(2025, 8, 15, 0, 0),
+                "Stadium naming rights for 5 years"
         );
 
         List<SponsorContractOfferResponse> responses = Arrays.asList(response1, response2);

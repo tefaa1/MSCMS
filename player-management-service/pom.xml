@@ -59,11 +59,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bus-amqp</artifactId>
-        </dependency>
-
         <!-- Redis with Jedis (recommended for production) -->
         <dependency>
             <groupId>redis.clients</groupId>
