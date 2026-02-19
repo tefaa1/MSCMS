@@ -4,6 +4,7 @@ import com.example.trainingmatchservice.dto.request.MatchRequest;
 import com.example.trainingmatchservice.dto.response.MatchResponse;
 import com.example.trainingmatchservice.model.match.enums.MatchStatus;
 import com.example.trainingmatchservice.model.match.enums.MatchType;
+import com.example.trainingmatchservice.model.match.enums.SportType;
 import com.example.trainingmatchservice.service.MatchService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,7 @@ class MatchControllerTest {
                 2L,
                 MatchType.FRIENDLY,
                 MatchStatus.SCHEDULED,
+                SportType.FOOTBALL,
                 "Stadium",
                 "League",
                 "2023-2024",
@@ -61,6 +63,7 @@ class MatchControllerTest {
                 2L,
                 MatchType.FRIENDLY,
                 MatchStatus.SCHEDULED,
+                SportType.FOOTBALL,
                 "Stadium",
                 "League",
                 "2023-2024",
@@ -129,5 +132,17 @@ class MatchControllerTest {
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         verify(matchService).deleteMatch(id);
+    }
+
+    @Test
+    void getMatchesBySportType_shouldReturnFilteredMatches() {
+        given(matchService.getMatchesBySportType(SportType.FOOTBALL)).willReturn(List.of(response));
+
+        ResponseEntity<List<MatchResponse>> result = controller.getMatchesBySportType(SportType.FOOTBALL);
+
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).hasSize(1);
+        assertThat(result.getBody().get(0).sportType()).isEqualTo(SportType.FOOTBALL);
+        verify(matchService).getMatchesBySportType(SportType.FOOTBALL);
     }
 }

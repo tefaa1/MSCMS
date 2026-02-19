@@ -1,6 +1,7 @@
 package com.example.medicalfitnessservice.model.entity;
 
 import com.example.medicalfitnessservice.model.enums.FitnessTestType;
+import com.example.medicalfitnessservice.model.enums.SportType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,6 +29,9 @@ public class FitnessTest {
 
     @Enumerated(EnumType.STRING)
     private FitnessTestType testType;
+
+    @Enumerated(EnumType.STRING)
+    private SportType sportType;
 
     private LocalDateTime testDate;
 

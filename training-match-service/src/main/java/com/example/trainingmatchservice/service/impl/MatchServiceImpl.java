@@ -8,6 +8,7 @@ import com.example.trainingmatchservice.model.match.entity.Match;
 import com.example.trainingmatchservice.model.match.entity.MatchFormation;
 import com.example.trainingmatchservice.repository.MatchFormationRepository;
 import com.example.trainingmatchservice.repository.MatchRepository;
+import com.example.trainingmatchservice.model.match.enums.SportType;
 import com.example.trainingmatchservice.service.MatchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,15 @@ public class MatchServiceImpl implements MatchService {
     @Transactional(readOnly = true)
     public List<MatchResponse> getAllMatches() {
         return matchRepository.findAll()
+                .stream()
+                .map(matchMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MatchResponse> getMatchesBySportType(SportType sportType) {
+        return matchRepository.findBySportType(sportType)
                 .stream()
                 .map(matchMapper::toResponse)
                 .toList();

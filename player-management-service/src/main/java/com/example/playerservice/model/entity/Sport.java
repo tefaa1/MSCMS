@@ -1,5 +1,6 @@
 package com.example.playerservice.model.entity;
 
+import com.example.playerservice.model.enums.SportType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,9 @@ public class Sport {
     private String name;
 
     private Long sportManagerId;
+
+    @Enumerated(EnumType.STRING)
+    private SportType sportType;
 
     @OneToMany(mappedBy = "sport", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Team> teams = new HashSet<>();

@@ -5,6 +5,7 @@ import com.example.reportsanalyticsservice.dto.response.TeamAnalyticsResponse;
 import com.example.reportsanalyticsservice.exception.custom.ResourceNotFoundException;
 import com.example.reportsanalyticsservice.mapper.TeamAnalyticsMapper;
 import com.example.reportsanalyticsservice.model.entity.TeamAnalytics;
+import com.example.reportsanalyticsservice.model.enums.SportType;
 import com.example.reportsanalyticsservice.repository.TeamAnalyticsRepository;
 import com.example.reportsanalyticsservice.service.TeamAnalyticsService;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,12 @@ public class TeamAnalyticsServiceImpl implements TeamAnalyticsService {
     @Transactional(readOnly = true)
     public List<TeamAnalyticsResponse> getAll() {
         return repository.findAll().stream().map(mapper::toResponse).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TeamAnalyticsResponse> getBySportType(SportType sportType) {
+        return repository.findBySportType(sportType).stream().map(mapper::toResponse).toList();
     }
 
     private TeamAnalytics findEntity(Long id) {

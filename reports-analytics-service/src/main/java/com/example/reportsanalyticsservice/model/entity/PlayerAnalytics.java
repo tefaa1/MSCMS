@@ -1,5 +1,6 @@
 package com.example.reportsanalyticsservice.model.entity;
 
+import com.example.reportsanalyticsservice.model.enums.SportType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,27 +25,30 @@ public class PlayerAnalytics {
     private String playerKeycloakId;
     private Long teamId;
 
+    @Enumerated(EnumType.STRING)
+    private SportType sportType;
+
     private LocalDate periodStart;
     private LocalDate periodEnd;
 
-    // Performance Metrics (aggregated from other services)
+    // Generic performance metrics
     private Integer totalMatches;
-    private Integer totalGoals;
-    private Integer totalAssists;
+    private Integer primaryScore;    // goals (football), points (basketball), sets won (tennis), etc.
+    private Integer secondaryScore;  // assists (football), rebounds (basketball), break points (tennis), etc.
     private Double averageRating;
     private Integer totalTrainingSessions;
-    private Integer attendanceRate;  // Percentage
+    private Integer attendanceRate;
 
-    // Fitness Metrics (from Medical & Fitness Service)
+    // Fitness Metrics
     private Integer currentInjuries;
     private Double averageFitnessScore;
     private Integer fitnessTestsCount;
 
     // KPI Metrics
-    private String kpiData;  // JSON string for various KPIs
-    private String trends;  // JSON string for performance trends
+    private String kpiData;
+    private String sportSpecificStats; // JSON for additional sport-specific metrics
+    private String trends;
 
     private LocalDateTime calculatedAt;
     private String notes;
 }
-

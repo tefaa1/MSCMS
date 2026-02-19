@@ -2,6 +2,7 @@ package com.example.playerservice.controller;
 
 import com.example.playerservice.dto.request.SportRequest;
 import com.example.playerservice.dto.response.SportResponse;
+import com.example.playerservice.model.enums.SportType;
 import com.example.playerservice.service.SportService;
 import com.example.playerservice.dto.validation.Create;
 import com.example.playerservice.dto.validation.Update;
@@ -53,6 +54,13 @@ public class SportController {
         return ResponseEntity.ok(sportService.getAllSports());
     }
 
+    @GetMapping("/by-type")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SPORT_MANAGER')")
+    public ResponseEntity<List<SportResponse>> getSportsByType(
+            @RequestParam SportType sportType) {
+        return ResponseEntity.ok(sportService.getSportsByType(sportType));
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteSport(@PathVariable @Positive Long id) {
@@ -60,4 +68,3 @@ public class SportController {
         return ResponseEntity.noContent().build();
     }
 }
-

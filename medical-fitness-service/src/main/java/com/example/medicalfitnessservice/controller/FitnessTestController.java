@@ -4,6 +4,7 @@ import com.example.medicalfitnessservice.dto.request.FitnessTestRequest;
 import com.example.medicalfitnessservice.dto.response.FitnessTestResponse;
 import com.example.medicalfitnessservice.dto.validation.Create;
 import com.example.medicalfitnessservice.dto.validation.Update;
+import com.example.medicalfitnessservice.model.enums.SportType;
 import com.example.medicalfitnessservice.service.FitnessTestService;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
@@ -51,6 +52,13 @@ public class FitnessTestController {
     @PreAuthorize("hasAnyRole('ADMIN','DOCTOR','PHYSIOTHERAPIST','TEAM_MANAGER')")
     public ResponseEntity<List<FitnessTestResponse>> getAllFitnessTests() {
         return ResponseEntity.ok(fitnessTestService.getAllFitnessTests());
+    }
+
+    @GetMapping("/by-sport")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR','PHYSIOTHERAPIST','TEAM_MANAGER')")
+    public ResponseEntity<List<FitnessTestResponse>> getFitnessTestsBySportType(
+            @RequestParam SportType sportType) {
+        return ResponseEntity.ok(fitnessTestService.getFitnessTestsBySportType(sportType));
     }
 
     @DeleteMapping("/{id}")

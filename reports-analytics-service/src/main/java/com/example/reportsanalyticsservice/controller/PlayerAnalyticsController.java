@@ -4,6 +4,7 @@ import com.example.reportsanalyticsservice.dto.request.PlayerAnalyticsRequest;
 import com.example.reportsanalyticsservice.dto.response.PlayerAnalyticsResponse;
 import com.example.reportsanalyticsservice.dto.validation.Create;
 import com.example.reportsanalyticsservice.dto.validation.Update;
+import com.example.reportsanalyticsservice.model.enums.SportType;
 import com.example.reportsanalyticsservice.service.PlayerAnalyticsService;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,12 @@ public class PlayerAnalyticsController {
     @PreAuthorize("hasAnyRole('ADMIN','PERFORMANCE_ANALYST','HEAD_COACH','TEAM_MANAGER')")
     public ResponseEntity<List<PlayerAnalyticsResponse>> getAll() {
         return ResponseEntity.ok(service.getAll());
+    }
+
+    @GetMapping("/by-sport")
+    @PreAuthorize("hasAnyRole('ADMIN','PERFORMANCE_ANALYST','HEAD_COACH','TEAM_MANAGER')")
+    public ResponseEntity<List<PlayerAnalyticsResponse>> getBySportType(@RequestParam SportType sportType) {
+        return ResponseEntity.ok(service.getBySportType(sportType));
     }
 
     @DeleteMapping("/{id}")

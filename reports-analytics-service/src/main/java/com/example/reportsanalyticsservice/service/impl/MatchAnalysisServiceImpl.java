@@ -6,6 +6,7 @@ import com.example.reportsanalyticsservice.exception.custom.ResourceNotFoundExce
 import com.example.reportsanalyticsservice.mapper.MatchAnalysisMapper;
 import com.example.reportsanalyticsservice.model.entity.MatchAnalysis;
 import com.example.reportsanalyticsservice.repository.MatchAnalysisRepository;
+import com.example.reportsanalyticsservice.model.enums.SportType;
 import com.example.reportsanalyticsservice.service.MatchAnalysisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,12 @@ public class MatchAnalysisServiceImpl implements MatchAnalysisService {
     @Transactional(readOnly = true)
     public List<MatchAnalysisResponse> getAll() {
         return repository.findAll().stream().map(mapper::toResponse).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MatchAnalysisResponse> getBySportType(SportType sportType) {
+        return repository.findBySportType(sportType).stream().map(mapper::toResponse).toList();
     }
 
     private MatchAnalysis findEntity(Long id) {

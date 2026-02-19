@@ -4,6 +4,7 @@ import com.example.trainingmatchservice.dto.request.MatchRequest;
 import com.example.trainingmatchservice.dto.response.MatchResponse;
 import com.example.trainingmatchservice.dto.validation.Create;
 import com.example.trainingmatchservice.dto.validation.Update;
+import com.example.trainingmatchservice.model.match.enums.SportType;
 import com.example.trainingmatchservice.service.MatchService;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
@@ -51,6 +52,12 @@ public class MatchController {
     @PreAuthorize("hasAnyRole('ADMIN','TEAM_MANAGER','HEAD_COACH','ASSISTANT_COACH','SPORT_MANAGER','PERFORMANCE_ANALYST')")
     public ResponseEntity<List<MatchResponse>> getAllMatches() {
         return ResponseEntity.ok(matchService.getAllMatches());
+    }
+
+    @GetMapping("/by-sport")
+    @PreAuthorize("hasAnyRole('ADMIN','TEAM_MANAGER','HEAD_COACH','ASSISTANT_COACH','SPORT_MANAGER','PERFORMANCE_ANALYST')")
+    public ResponseEntity<List<MatchResponse>> getMatchesBySportType(@RequestParam SportType sportType) {
+        return ResponseEntity.ok(matchService.getMatchesBySportType(sportType));
     }
 
     @DeleteMapping("/{id}")

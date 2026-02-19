@@ -2,17 +2,19 @@ package com.example.reportsanalyticsservice.controller;
 
 import com.example.reportsanalyticsservice.dto.request.TeamAnalyticsRequest;
 import com.example.reportsanalyticsservice.dto.response.TeamAnalyticsResponse;
+import com.example.reportsanalyticsservice.model.enums.SportType;
 import com.example.reportsanalyticsservice.service.TeamAnalyticsService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,221 +30,125 @@ class TeamAnalyticsControllerTest {
     @InjectMocks
     private TeamAnalyticsController teamAnalyticsController;
 
+    private TeamAnalyticsRequest request;
+    private TeamAnalyticsResponse response;
+
+    @BeforeEach
+    void setUp() {
+        request = new TeamAnalyticsRequest(
+                1L,
+                SportType.FOOTBALL,
+                LocalDate.of(2025, 8, 1),
+                LocalDate.of(2026, 5, 31),
+                38,
+                25,
+                8,
+                5,
+                75,
+                30,
+                85.0,
+                15,
+                120,
+                "{\"avgPossession\":55.0}",
+                "{\"pressureSuccessRate\":0.68}",
+                "Strong attack and midfield",
+                LocalDateTime.of(2025, 6, 1, 10, 0),
+                "Good team performance"
+        );
+
+        response = new TeamAnalyticsResponse(
+                1L,
+                1L,
+                SportType.FOOTBALL,
+                LocalDate.of(2025, 8, 1),
+                LocalDate.of(2026, 5, 31),
+                38,
+                25,
+                8,
+                5,
+                75,
+                30,
+                85.0,
+                15,
+                120,
+                "{\"avgPossession\":55.0}",
+                "{\"pressureSuccessRate\":0.68}",
+                "Strong attack and midfield",
+                LocalDateTime.of(2025, 6, 1, 10, 0),
+                "Good team performance"
+        );
+    }
+
     @Test
     void testCreateTeamAnalytics() {
-        // Given
-        TeamAnalyticsRequest request = new TeamAnalyticsRequest(
-                1L,
-                LocalDate.of(2025, 8, 1),
-                LocalDate.of(2026, 5, 31),
-                38,
-                25,
-                8,
-                5,
-                75,
-                30,
-                85.0,
-                15,
-                120,
-                "KPI data",
-                "Strong attack and midfield",
-                LocalDateTime.of(2025, 6, 1, 10, 0),
-                "Good team performance"
-        );
-
-        TeamAnalyticsResponse response = new TeamAnalyticsResponse(
-                1L,
-                1L,
-                LocalDate.of(2025, 8, 1),
-                LocalDate.of(2026, 5, 31),
-                38,
-                25,
-                8,
-                5,
-                75,
-                30,
-                85.0,
-                15,
-                120,
-                "KPI data",
-                "Strong attack and midfield",
-                LocalDateTime.of(2025, 6, 1, 10, 0),
-                "Good team performance"
-        );
-
         given(teamAnalyticsService.create(request)).willReturn(response);
 
-        // When
         ResponseEntity<TeamAnalyticsResponse> result = teamAnalyticsController.create(request);
 
-        // Then
-        assertThat(result.getStatusCodeValue()).isEqualTo(201);
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(result.getBody()).isNotNull();
         assertThat(result.getBody().id()).isEqualTo(1L);
         assertThat(result.getBody().teamId()).isEqualTo(1L);
+        assertThat(result.getBody().sportType()).isEqualTo(SportType.FOOTBALL);
         assertThat(result.getBody().totalMatches()).isEqualTo(38);
-        verify(teamAnalyticsService, times(1)).create(request);
+        verify(teamAnalyticsService).create(request);
     }
 
     @Test
     void testUpdateTeamAnalytics() {
-        // Given
-        Long id = 1L;
-        TeamAnalyticsRequest request = new TeamAnalyticsRequest(
-                1L,
-                LocalDate.of(2025, 8, 1),
-                LocalDate.of(2026, 5, 31),
-                40,
-                28,
-                7,
-                5,
-                82,
-                28,
-                87.5,
-                18,
-                130,
-                "Updated KPI data",
-                "Excellent attack and improved defense",
-                LocalDateTime.of(2025, 6, 2, 10, 0),
-                "Strong team performance"
-        );
+        given(teamAnalyticsService.update(1L, request)).willReturn(response);
 
-        TeamAnalyticsResponse response = new TeamAnalyticsResponse(
-                1L,
-                1L,
-                LocalDate.of(2025, 8, 1),
-                LocalDate.of(2026, 5, 31),
-                40,
-                28,
-                7,
-                5,
-                82,
-                28,
-                87.5,
-                18,
-                130,
-                "Updated KPI data",
-                "Excellent attack and improved defense",
-                LocalDateTime.of(2025, 6, 2, 10, 0),
-                "Strong team performance"
-        );
+        ResponseEntity<TeamAnalyticsResponse> result = teamAnalyticsController.update(1L, request);
 
-        given(teamAnalyticsService.update(id, request)).willReturn(response);
-
-        // When
-        ResponseEntity<TeamAnalyticsResponse> result = teamAnalyticsController.update(id, request);
-
-        // Then
-        assertThat(result.getStatusCodeValue()).isEqualTo(200);
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody()).isNotNull();
-        assertThat(result.getBody().id()).isEqualTo(1L);
-        assertThat(result.getBody().wins()).isEqualTo(28);
-        verify(teamAnalyticsService, times(1)).update(id, request);
+        assertThat(result.getBody().wins()).isEqualTo(25);
+        assertThat(result.getBody().pointsFor()).isEqualTo(75);
+        verify(teamAnalyticsService).update(1L, request);
     }
 
     @Test
     void testGetTeamAnalyticsById() {
-        // Given
-        Long id = 1L;
-        TeamAnalyticsResponse response = new TeamAnalyticsResponse(
-                1L,
-                1L,
-                LocalDate.of(2025, 8, 1),
-                LocalDate.of(2026, 5, 31),
-                38,
-                25,
-                8,
-                5,
-                75,
-                30,
-                85.0,
-                15,
-                120,
-                "KPI data",
-                "Strong attack and midfield",
-                LocalDateTime.of(2025, 6, 1, 10, 0),
-                "Good team performance"
-        );
+        given(teamAnalyticsService.getById(1L)).willReturn(response);
 
-        given(teamAnalyticsService.getById(id)).willReturn(response);
+        ResponseEntity<TeamAnalyticsResponse> result = teamAnalyticsController.getById(1L);
 
-        // When
-        ResponseEntity<TeamAnalyticsResponse> result = teamAnalyticsController.getById(id);
-
-        // Then
-        assertThat(result.getStatusCodeValue()).isEqualTo(200);
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody()).isNotNull();
         assertThat(result.getBody().id()).isEqualTo(1L);
-        verify(teamAnalyticsService, times(1)).getById(id);
+        verify(teamAnalyticsService).getById(1L);
     }
 
     @Test
     void testGetAllTeamAnalytics() {
-        // Given
-        TeamAnalyticsResponse response1 = new TeamAnalyticsResponse(
-                1L,
-                1L,
-                LocalDate.of(2025, 8, 1),
-                LocalDate.of(2026, 5, 31),
-                38,
-                25,
-                8,
-                5,
-                75,
-                30,
-                85.0,
-                15,
-                120,
-                "KPI data",
-                "Strong attack and midfield",
-                LocalDateTime.of(2025, 6, 1, 10, 0),
-                "Good team performance"
-        );
+        given(teamAnalyticsService.getAll()).willReturn(List.of(response));
 
-        TeamAnalyticsResponse response2 = new TeamAnalyticsResponse(
-                2L,
-                2L,
-                LocalDate.of(2025, 8, 1),
-                LocalDate.of(2026, 5, 31),
-                38,
-                20,
-                10,
-                8,
-                60,
-                35,
-                82.0,
-                12,
-                110,
-                "KPI data 2",
-                "Solid defense",
-                LocalDateTime.of(2025, 6, 1, 10, 0),
-                "Stable performance"
-        );
-
-        List<TeamAnalyticsResponse> responses = Arrays.asList(response1, response2);
-        given(teamAnalyticsService.getAll()).willReturn(responses);
-
-        // When
         ResponseEntity<List<TeamAnalyticsResponse>> result = teamAnalyticsController.getAll();
 
-        // Then
-        assertThat(result.getStatusCodeValue()).isEqualTo(200);
-        assertThat(result.getBody()).isNotNull();
-        assertThat(result.getBody()).hasSize(2);
-        verify(teamAnalyticsService, times(1)).getAll();
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).hasSize(1);
+        verify(teamAnalyticsService).getAll();
+    }
+
+    @Test
+    void testGetTeamAnalyticsBySportType() {
+        given(teamAnalyticsService.getBySportType(SportType.FOOTBALL)).willReturn(List.of(response));
+
+        ResponseEntity<List<TeamAnalyticsResponse>> result = teamAnalyticsController.getBySportType(SportType.FOOTBALL);
+
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).hasSize(1);
+        assertThat(result.getBody().get(0).sportType()).isEqualTo(SportType.FOOTBALL);
+        verify(teamAnalyticsService).getBySportType(SportType.FOOTBALL);
     }
 
     @Test
     void testDeleteTeamAnalytics() {
-        // Given
-        Long id = 1L;
-        doNothing().when(teamAnalyticsService).delete(id);
+        doNothing().when(teamAnalyticsService).delete(1L);
 
-        // When
-        ResponseEntity<Void> result = teamAnalyticsController.delete(id);
+        ResponseEntity<Void> result = teamAnalyticsController.delete(1L);
 
-        // Then
-        assertThat(result.getStatusCodeValue()).isEqualTo(204);
-        verify(teamAnalyticsService, times(1)).delete(id);
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(teamAnalyticsService).delete(1L);
     }
 }

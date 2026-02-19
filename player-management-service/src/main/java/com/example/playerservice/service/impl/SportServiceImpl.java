@@ -5,6 +5,7 @@ import com.example.playerservice.dto.response.SportResponse;
 import com.example.playerservice.exception.custom.ResourceNotFoundException;
 import com.example.playerservice.mapper.SportMapper;
 import com.example.playerservice.model.entity.Sport;
+import com.example.playerservice.model.enums.SportType;
 import com.example.playerservice.repository.SportRepository;
 import com.example.playerservice.service.SportService;
 import lombok.RequiredArgsConstructor;
@@ -55,9 +56,17 @@ public class SportServiceImpl implements SportService {
                 .toList();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<SportResponse> getSportsByType(SportType sportType) {
+        return sportRepository.findBySportType(sportType)
+                .stream()
+                .map(sportMapper::toResponse)
+                .toList();
+    }
+
     private Sport getSport(Long id) {
         return sportRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sport not found with id " + id));
     }
 }
-

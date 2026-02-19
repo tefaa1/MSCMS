@@ -1,5 +1,6 @@
 package com.example.reportsanalyticsservice.model.entity;
 
+import com.example.reportsanalyticsservice.model.enums.SportType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,31 +21,27 @@ public class MatchAnalysis {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long matchId;  // Reference to Match
-    private Long teamId;  // Which team's analysis
+    private Long matchId;
+    private Long teamId;
 
-    // Match Statistics (metadata only - actual data from Training & Match Service)
-    private Integer possession;
-    private Integer shots;
-    private Integer shotsOnTarget;
-    private Integer passes;
-    private Integer passAccuracy;  // Percentage
-    private Integer tackles;
-    private Integer fouls;
+    @Enumerated(EnumType.STRING)
+    private SportType sportType;
 
-    // Heatmap Metadata (file references stored externally)
-    private String heatmapFilePath;  // Path to heatmap image file
-    private String heatmapType;  // e.g., "Player Movement", "Ball Position", "Pressure Map"
+    // Sport-specific stats stored as JSON (e.g. football: possession/shots; basketball: fieldGoalPct/rebounds)
+    private String sportSpecificStats;
+
+    // Heatmap Metadata
+    private String heatmapFilePath;
+    private String heatmapType;
 
     // Analysis Data
-    private String keyMoments;  // JSON string for key match moments
-    private String tacticalAnalysis;  // Tactical insights
-    private String playerRatings;  // JSON string for player ratings
+    private String keyMoments;
+    private String tacticalAnalysis;
+    private String playerRatings;
 
-    private String analyzedByUserKeycloakId;  // Reference to Performance Analyst or Coach
+    private String analyzedByUserKeycloakId;
     private LocalDateTime analyzedAt;
 
     private String notes;
-    private String attachments;  // Additional file references
+    private String attachments;
 }
-

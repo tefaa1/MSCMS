@@ -4,6 +4,7 @@ import com.example.trainingmatchservice.dto.request.PlayerMatchStatisticsRequest
 import com.example.trainingmatchservice.dto.response.PlayerMatchStatisticsResponse;
 import com.example.trainingmatchservice.dto.validation.Create;
 import com.example.trainingmatchservice.dto.validation.Update;
+import com.example.trainingmatchservice.model.match.enums.SportType;
 import com.example.trainingmatchservice.service.PlayerMatchStatisticsService;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
@@ -51,6 +52,20 @@ public class PlayerMatchStatisticsController {
     @PreAuthorize("hasAnyRole('ADMIN','TEAM_MANAGER','HEAD_COACH','ASSISTANT_COACH','PERFORMANCE_ANALYST','SPORT_MANAGER')")
     public ResponseEntity<List<PlayerMatchStatisticsResponse>> getAllMatchStats() {
         return ResponseEntity.ok(playerMatchStatisticsService.getAllPlayerMatchStatistics());
+    }
+
+    @GetMapping("/by-match/{matchId}")
+    @PreAuthorize("hasAnyRole('ADMIN','TEAM_MANAGER','HEAD_COACH','ASSISTANT_COACH','PERFORMANCE_ANALYST','SPORT_MANAGER')")
+    public ResponseEntity<List<PlayerMatchStatisticsResponse>> getStatsByMatch(
+            @PathVariable @Positive Long matchId) {
+        return ResponseEntity.ok(playerMatchStatisticsService.getStatsByMatch(matchId));
+    }
+
+    @GetMapping("/by-sport")
+    @PreAuthorize("hasAnyRole('ADMIN','TEAM_MANAGER','HEAD_COACH','ASSISTANT_COACH','PERFORMANCE_ANALYST','SPORT_MANAGER')")
+    public ResponseEntity<List<PlayerMatchStatisticsResponse>> getStatsBySportType(
+            @RequestParam SportType sportType) {
+        return ResponseEntity.ok(playerMatchStatisticsService.getStatsBySportType(sportType));
     }
 
     @DeleteMapping("/{id}")

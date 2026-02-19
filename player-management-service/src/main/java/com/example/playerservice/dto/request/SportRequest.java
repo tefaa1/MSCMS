@@ -2,6 +2,7 @@ package com.example.playerservice.dto.request;
 
 import com.example.playerservice.dto.validation.Create;
 import com.example.playerservice.dto.validation.Update;
+import com.example.playerservice.model.enums.SportType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -14,10 +15,12 @@ public record SportRequest(
 
         @NotNull(groups = Create.class)
         @Positive(groups = {Create.class, Update.class})
-        Long sportManagerId
+        Long sportManagerId,
+
+        @NotNull(groups = Create.class)
+        SportType sportType
 ) {
     public SportRequest {
         name = name != null ? name.trim() : null;
     }
 }
-

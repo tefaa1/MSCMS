@@ -3,6 +3,7 @@ package com.example.medicalfitnessservice.controller;
 import com.example.medicalfitnessservice.dto.request.FitnessTestRequest;
 import com.example.medicalfitnessservice.dto.response.FitnessTestResponse;
 import com.example.medicalfitnessservice.model.enums.FitnessTestType;
+import com.example.medicalfitnessservice.model.enums.SportType;
 import com.example.medicalfitnessservice.service.FitnessTestService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,7 @@ class FitnessTestControllerTest {
                 "player-keycloak-id-1",
                 2L,
                 FitnessTestType.SPEED_TEST,
+                SportType.FOOTBALL,
                 LocalDateTime.now(),
                 "doctor-keycloak-id-1",
                 "Sprint 30m",
@@ -56,6 +58,7 @@ class FitnessTestControllerTest {
                 request.playerKeycloakId(),
                 request.teamId(),
                 request.testType(),
+                request.sportType(),
                 request.testDate(),
                 request.conductedByDoctorKeycloakId(),
                 request.testName(),
@@ -76,6 +79,7 @@ class FitnessTestControllerTest {
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(result.getBody()).isEqualTo(response);
+        assertThat(result.getBody().sportType()).isEqualTo(SportType.FOOTBALL);
         verify(fitnessTestService).createFitnessTest(eq(request));
     }
 
@@ -115,6 +119,18 @@ class FitnessTestControllerTest {
     }
 
     @Test
+    void getFitnessTestsBySportType_shouldReturnFilteredTests() {
+        given(fitnessTestService.getFitnessTestsBySportType(SportType.FOOTBALL)).willReturn(List.of(response));
+
+        ResponseEntity<List<FitnessTestResponse>> result = controller.getFitnessTestsBySportType(SportType.FOOTBALL);
+
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).hasSize(1);
+        assertThat(result.getBody().get(0).sportType()).isEqualTo(SportType.FOOTBALL);
+        verify(fitnessTestService).getFitnessTestsBySportType(SportType.FOOTBALL);
+    }
+
+    @Test
     void deleteFitnessTest_shouldReturnNoContent() {
         Long id = 1L;
 
@@ -124,4 +140,3 @@ class FitnessTestControllerTest {
         verify(fitnessTestService).deleteFitnessTest(id);
     }
 }
-

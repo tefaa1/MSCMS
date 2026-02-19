@@ -1,18 +1,14 @@
 package com.example.reportsanalyticsservice.dto.response;
 
+import com.example.reportsanalyticsservice.model.enums.SportType;
 import java.time.LocalDateTime;
 
 public record MatchAnalysisResponse(
         Long id,
         Long matchId,
         Long teamId,
-        Integer possession,
-        Integer shots,
-        Integer shotsOnTarget,
-        Integer passes,
-        Integer passAccuracy,
-        Integer tackles,
-        Integer fouls,
+        SportType sportType,
+        String sportSpecificStats,
         String heatmapFilePath,
         String heatmapType,
         String keyMoments,

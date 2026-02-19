@@ -1,5 +1,6 @@
 package com.example.reportsanalyticsservice.model.entity;
 
+import com.example.reportsanalyticsservice.model.enums.SportType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +24,9 @@ public class TeamAnalytics {
 
     private Long teamId;
 
+    @Enumerated(EnumType.STRING)
+    private SportType sportType;
+
     private LocalDate periodStart;
     private LocalDate periodEnd;
 
@@ -32,16 +36,18 @@ public class TeamAnalytics {
     private Integer draws;
     private Integer losses;
 
-    private Integer goalsFor;
-    private Integer goalsAgainst;
+    // Generic scoring (goals in football, points in basketball, sets in tennis, etc.)
+    private Integer pointsFor;
+    private Integer pointsAgainst;
 
     // Training influence
-    private Double averageTeamFitnessScore;      // avg from Medical/Fitness
-    private Integer totalInjuries;               // from Medical service
-    private Integer totalTrainingSessions;       // aggregated
+    private Double averageTeamFitnessScore;
+    private Integer totalInjuries;
+    private Integer totalTrainingSessions;
 
-    // KPIs (stored as JSON)
+    // KPIs and sport-specific stats (stored as JSON)
     private String kpiData;
+    private String sportSpecificStats;
     private String trends;
 
     private LocalDateTime calculatedAt;

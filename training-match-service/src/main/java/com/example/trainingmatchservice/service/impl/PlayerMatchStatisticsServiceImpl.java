@@ -8,6 +8,7 @@ import com.example.trainingmatchservice.model.match.entity.Match;
 import com.example.trainingmatchservice.model.match.entity.PlayerMatchStatistics;
 import com.example.trainingmatchservice.repository.MatchRepository;
 import com.example.trainingmatchservice.repository.PlayerMatchStatisticsRepository;
+import com.example.trainingmatchservice.model.match.enums.SportType;
 import com.example.trainingmatchservice.service.PlayerMatchStatisticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,24 @@ public class PlayerMatchStatisticsServiceImpl implements PlayerMatchStatisticsSe
     @Transactional(readOnly = true)
     public List<PlayerMatchStatisticsResponse> getAllPlayerMatchStatistics() {
         return playerMatchStatisticsRepository.findAll()
+                .stream()
+                .map(playerMatchStatisticsMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PlayerMatchStatisticsResponse> getStatsByMatch(Long matchId) {
+        return playerMatchStatisticsRepository.findByMatchId(matchId)
+                .stream()
+                .map(playerMatchStatisticsMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PlayerMatchStatisticsResponse> getStatsBySportType(SportType sportType) {
+        return playerMatchStatisticsRepository.findBySportType(sportType)
                 .stream()
                 .map(playerMatchStatisticsMapper::toResponse)
                 .toList();

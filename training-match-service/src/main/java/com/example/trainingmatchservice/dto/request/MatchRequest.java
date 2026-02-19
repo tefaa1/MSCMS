@@ -4,6 +4,7 @@ import com.example.trainingmatchservice.dto.validation.Create;
 import com.example.trainingmatchservice.dto.validation.Update;
 import com.example.trainingmatchservice.model.match.enums.MatchStatus;
 import com.example.trainingmatchservice.model.match.enums.MatchType;
+import com.example.trainingmatchservice.model.match.enums.SportType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.*;
 
@@ -23,6 +24,9 @@ public record MatchRequest(
 
         @NotNull(groups = Create.class)
         MatchStatus status,
+
+        @NotNull(groups = Create.class)
+        SportType sportType,
 
         @NotBlank(groups = Create.class)
         @Size(min = 2, groups = {Create.class, Update.class})

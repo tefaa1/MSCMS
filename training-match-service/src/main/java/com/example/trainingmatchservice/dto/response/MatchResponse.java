@@ -2,6 +2,7 @@ package com.example.trainingmatchservice.dto.response;
 
 import com.example.trainingmatchservice.model.match.enums.MatchStatus;
 import com.example.trainingmatchservice.model.match.enums.MatchType;
+import com.example.trainingmatchservice.model.match.enums.SportType;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +12,7 @@ public record MatchResponse(
         Long outerTeamId,
         MatchType matchType,
         MatchStatus status,
+        SportType sportType,
         String venue,
         String competition,
         String season,

@@ -4,6 +4,7 @@ import com.example.reportsanalyticsservice.dto.request.MatchAnalysisRequest;
 import com.example.reportsanalyticsservice.dto.response.MatchAnalysisResponse;
 import com.example.reportsanalyticsservice.dto.validation.Create;
 import com.example.reportsanalyticsservice.dto.validation.Update;
+import com.example.reportsanalyticsservice.model.enums.SportType;
 import com.example.reportsanalyticsservice.service.MatchAnalysisService;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,12 @@ public class MatchAnalysisController {
     @PreAuthorize("hasAnyRole('ADMIN','PERFORMANCE_ANALYST','HEAD_COACH','TEAM_MANAGER','SPORT_MANAGER')")
     public ResponseEntity<List<MatchAnalysisResponse>> getAll() {
         return ResponseEntity.ok(service.getAll());
+    }
+
+    @GetMapping("/by-sport")
+    @PreAuthorize("hasAnyRole('ADMIN','PERFORMANCE_ANALYST','HEAD_COACH','TEAM_MANAGER','SPORT_MANAGER')")
+    public ResponseEntity<List<MatchAnalysisResponse>> getBySportType(@RequestParam SportType sportType) {
+        return ResponseEntity.ok(service.getBySportType(sportType));
     }
 
     @DeleteMapping("/{id}")

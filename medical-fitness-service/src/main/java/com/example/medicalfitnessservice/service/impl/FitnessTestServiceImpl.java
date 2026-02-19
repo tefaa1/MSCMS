@@ -6,6 +6,7 @@ import com.example.medicalfitnessservice.exception.custom.ResourceNotFoundExcept
 import com.example.medicalfitnessservice.mapper.FitnessTestMapper;
 import com.example.medicalfitnessservice.model.entity.FitnessTest;
 import com.example.medicalfitnessservice.repository.FitnessTestRepository;
+import com.example.medicalfitnessservice.model.enums.SportType;
 import com.example.medicalfitnessservice.service.FitnessTestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,15 @@ public class FitnessTestServiceImpl implements FitnessTestService {
     @Transactional(readOnly = true)
     public List<FitnessTestResponse> getAllFitnessTests() {
         return fitnessTestRepository.findAll()
+                .stream()
+                .map(fitnessTestMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<FitnessTestResponse> getFitnessTestsBySportType(SportType sportType) {
+        return fitnessTestRepository.findBySportType(sportType)
                 .stream()
                 .map(fitnessTestMapper::toResponse)
                 .toList();

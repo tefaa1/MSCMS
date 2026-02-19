@@ -2,6 +2,7 @@ package com.example.trainingmatchservice.model.match.entity;
 
 import com.example.trainingmatchservice.model.match.enums.MatchStatus;
 import com.example.trainingmatchservice.model.match.enums.MatchType;
+import com.example.trainingmatchservice.model.match.enums.SportType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,6 +33,9 @@ public class Match {
 
     @Enumerated(EnumType.STRING)
     private MatchStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private SportType sportType;
 
     private String venue;  // // e.g., Camp Nou
     private String competition;  // e.g., "Premier League"

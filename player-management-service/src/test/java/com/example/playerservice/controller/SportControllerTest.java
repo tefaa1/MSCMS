@@ -2,6 +2,7 @@ package com.example.playerservice.controller;
 
 import com.example.playerservice.dto.request.SportRequest;
 import com.example.playerservice.dto.response.SportResponse;
+import com.example.playerservice.model.enums.SportType;
 import com.example.playerservice.service.SportService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,59 +30,74 @@ class SportControllerTest {
     @InjectMocks
     private SportController sportController;
 
-    private SportRequest request;
-    private SportResponse response;
+    private SportRequest footballRequest;
+    private SportResponse footballResponse;
+    private SportResponse basketballResponse;
 
     @BeforeEach
     void setUp() {
-        request = new SportRequest("Football", 1L);
-        response = new SportResponse(1L, "Football", 1L);
+        footballRequest = new SportRequest("Football", 1L, SportType.FOOTBALL);
+        footballResponse = new SportResponse(1L, "Football", 1L, SportType.FOOTBALL);
+        basketballResponse = new SportResponse(2L, "Basketball", 2L, SportType.BASKETBALL);
     }
 
     @Test
     void createSport_shouldReturnCreatedResponse() {
-        given(sportService.createSport(any(SportRequest.class))).willReturn(response);
+        given(sportService.createSport(any(SportRequest.class))).willReturn(footballResponse);
 
-        ResponseEntity<SportResponse> result = sportController.createSport(request);
+        ResponseEntity<SportResponse> result = sportController.createSport(footballRequest);
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(result.getBody()).isEqualTo(response);
-        verify(sportService).createSport(eq(request));
+        assertThat(result.getBody()).isEqualTo(footballResponse);
+        assertThat(result.getBody().getSportType()).isEqualTo(SportType.FOOTBALL);
+        verify(sportService).createSport(eq(footballRequest));
     }
 
     @Test
     void updateSport_shouldReturnOkResponse() {
         Long id = 1L;
-        given(sportService.updateSport(eq(id), any(SportRequest.class))).willReturn(response);
+        given(sportService.updateSport(eq(id), any(SportRequest.class))).willReturn(footballResponse);
 
-        ResponseEntity<SportResponse> result = sportController.updateSport(id, request);
+        ResponseEntity<SportResponse> result = sportController.updateSport(id, footballRequest);
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(result.getBody()).isEqualTo(response);
-        verify(sportService).updateSport(id, request);
+        assertThat(result.getBody()).isEqualTo(footballResponse);
+        verify(sportService).updateSport(id, footballRequest);
     }
 
     @Test
     void getSport_shouldReturnOkResponse() {
         Long id = 1L;
-        given(sportService.getSportById(id)).willReturn(response);
+        given(sportService.getSportById(id)).willReturn(footballResponse);
 
         ResponseEntity<SportResponse> result = sportController.getSport(id);
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(result.getBody()).isEqualTo(response);
+        assertThat(result.getBody()).isEqualTo(footballResponse);
         verify(sportService).getSportById(id);
     }
 
     @Test
-    void getAllSports_shouldReturnList() {
-        given(sportService.getAllSports()).willReturn(List.of(response));
+    void getAllSports_shouldReturnAllSports() {
+        given(sportService.getAllSports()).willReturn(List.of(footballResponse, basketballResponse));
 
         ResponseEntity<List<SportResponse>> result = sportController.getAllSports();
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(result.getBody()).containsExactly(response);
+        assertThat(result.getBody()).hasSize(2);
         verify(sportService).getAllSports();
+    }
+
+    @Test
+    void getSportsByType_shouldReturnFilteredSports() {
+        given(sportService.getSportsByType(SportType.BASKETBALL)).willReturn(List.of(basketballResponse));
+
+        ResponseEntity<List<SportResponse>> result = sportController.getSportsByType(SportType.BASKETBALL);
+
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).hasSize(1);
+        assertThat(result.getBody().get(0).getSportType()).isEqualTo(SportType.BASKETBALL);
+        verify(sportService).getSportsByType(SportType.BASKETBALL);
     }
 
     @Test
@@ -94,4 +110,3 @@ class SportControllerTest {
         verify(sportService).deleteSport(id);
     }
 }
-
