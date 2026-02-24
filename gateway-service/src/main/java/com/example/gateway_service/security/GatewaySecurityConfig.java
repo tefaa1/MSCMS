@@ -30,6 +30,7 @@ public class GatewaySecurityConfig {
                         .requestMatchers("/v3/api-docs/**", "/v3/api-docs.yaml", "/v3/api-docs.json").permitAll()
                         .requestMatchers("/webjars/**", "/swagger-resources/**", "/swagger-ui.html/**").permitAll()
                         .requestMatchers("/api-docs/**", "/api-docs.yaml", "/api-docs.json").permitAll()
+                        .requestMatchers("/*/v3/api-docs/**").permitAll()
 
                         .requestMatchers("/actuator/**", "/eureka/**").permitAll()
 
@@ -47,16 +48,13 @@ public class GatewaySecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/sport-managers/**").hasRole("SPORT_MANAGER")
                         .requestMatchers(HttpMethod.GET, "/staff/team/**").hasRole("SPORT_MANAGER")
 
-
                         .requestMatchers(HttpMethod.PUT, "/team-managers/{id}/assign-staff/**").hasRole("TEAM_MANAGER")
                         .requestMatchers(HttpMethod.GET, "/players/team/**").hasRole("TEAM_MANAGER")
-
 
                         .requestMatchers(HttpMethod.GET, "/players/**").hasAnyRole(
                                 "HEAD_COACH", "ASSISTANT_COACH", "SPECIFIC_COACH",
                                 "FITNESS_COACH", "PERFORMANCE_ANALYST", "TEAM_DOCTOR",
-                                "PHYSIOTHERAPIST"
-                        )
+                                "PHYSIOTHERAPIST")
 
                         .requestMatchers("/scouts/**").hasRole("SCOUT")
 
@@ -67,8 +65,7 @@ public class GatewaySecurityConfig {
                         .requestMatchers("/fans/**").hasRole("FAN")
 
                         // any other endpoint → must be authenticated
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)));
 
         return http.build();
