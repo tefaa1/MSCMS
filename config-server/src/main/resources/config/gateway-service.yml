@@ -33,6 +33,13 @@ spring:
             predicates:
               - Path=/match-analyses/**,/player-analytics/**,/scout-reports/**,/sponsor-offers/**,/team-analytics/**,/training-analytics/**
 
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka-server:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+
 server:
   port: 8080
 
