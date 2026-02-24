@@ -52,7 +52,9 @@ services:
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
-    command: [ "start-dev" ]
+    command: [ "start-dev", "--import-realm" ]
+    volumes:
+      - ./keycloak/mscms-realm.json:/opt/keycloak/data/import/mscms-realm.json
     ports:
       - "8443:8080"
     healthcheck:
