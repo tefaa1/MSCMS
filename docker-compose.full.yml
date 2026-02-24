@@ -1,0 +1,152 @@
+version: '3.8'
+
+services:
+  # --- Infrastructure ---
+  postgres:
+    image: postgres:14
+    container_name: postgres
+    environment:
+      POSTGRES_USER: embarkx
+      POSTGRES_PASSWORD: embarkx
+    ports:
+      - "5432:5432"
+    networks:
+      - mscms-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - mscms-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2.5
+    container_name: keycloak
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    command: [ "start-dev" ]
+    ports:
+      - "8443:8080"
+    networks:
+      - mscms-network
+
+  eureka-server:
+    image: teefaaa/eureka-server:latest
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - mscms-network
+
+  config-server:
+    image: teefaaa/config-server:latest
+    container_name: config-server
+    ports:
+      - "8082:8082"
+    depends_on:
+      - eureka-server
+    networks:
+      - mscms-network
+
+  gateway-service:
+    image: teefaaa/gateway-service:latest
+    container_name: gateway-service
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8082
+    depends_on:
+      - config-server
+    networks:
+      - mscms-network
+
+  # --- Microservices ---
+  user-management-service:
+    image: teefaaa/user-management-service:latest
+    container_name: user-management-service
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8082
+      - DB_URI=jdbc:postgresql://postgres:5432/mscms_user
+      - DB_USER=embarkx
+      - DB_PASSWORD=embarkx
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      - config-server
+      - postgres
+    networks:
+      - mscms-network
+
+  player-management-service:
+    image: teefaaa/player-management-service:latest
+    container_name: player-management-service
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8082
+      - DB_URI=jdbc:postgresql://postgres:5432/mscms_player
+      - DB_USER=embarkx
+      - DB_PASSWORD=embarkx
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      - config-server
+      - postgres
+    networks:
+      - mscms-network
+
+  training-match-service:
+    image: teefaaa/training-match-service:latest
+    container_name: training-match-service
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8082
+      - DB_URI=jdbc:postgresql://postgres:5432/mscms_training
+      - DB_USER=embarkx
+      - DB_PASSWORD=embarkx
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      - config-server
+      - postgres
+    networks:
+      - mscms-network
+
+  medical-fitness-service:
+    image: teefaaa/medical-fitness-service:latest
+    container_name: medical-fitness-service
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8082
+      - DB_URI=jdbc:postgresql://postgres:5432/mscms_medical
+      - DB_USER=embarkx
+      - DB_PASSWORD=embarkx
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      - config-server
+      - postgres
+    networks:
+      - mscms-network
+
+  notification-mail-service:
+    image: teefaaa/notification-mail-service:latest
+    container_name: notification-mail-service
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8082
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      - config-server
+    networks:
+      - mscms-network
+
+  reports-analytics-service:
+    image: teefaaa/reports-analytics-service:latest
+    container_name: reports-analytics-service
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8082
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      - config-server
+    networks:
+      - mscms-network
+
+networks:
+  mscms-network:
+    driver: bridge
