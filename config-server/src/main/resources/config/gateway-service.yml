@@ -32,6 +32,58 @@ spring:
             uri: lb://REPORTS-ANALYTICS-SERVICE
             predicates:
               - Path=/match-analyses/**,/player-analytics/**,/scout-reports/**,/sponsor-offers/**,/team-analytics/**,/training-analytics/**
+          - id: user-management-api-docs
+            uri: lb://USER-MANAGEMENT-SERVICE
+            predicates:
+              - Path=/user-management/v3/api-docs/**
+            filters:
+              - StripPrefix=1
+          - id: player-management-api-docs
+            uri: lb://PLAYER-MANAGEMENT-SERVICE
+            predicates:
+              - Path=/player-management/v3/api-docs/**
+            filters:
+              - StripPrefix=1
+          - id: training-match-api-docs
+            uri: lb://TRAINING-MATCH-SERVICE
+            predicates:
+              - Path=/training-match/v3/api-docs/**
+            filters:
+              - StripPrefix=1
+          - id: medical-fitness-api-docs
+            uri: lb://MEDICAL-FITNESS-SERVICE
+            predicates:
+              - Path=/medical-fitness/v3/api-docs/**
+            filters:
+              - StripPrefix=1
+          - id: notification-mail-api-docs
+            uri: lb://NOTIFICATION-MAIL-SERVICE
+            predicates:
+              - Path=/notification-mail/v3/api-docs/**
+            filters:
+              - StripPrefix=1
+          - id: reports-analytics-api-docs
+            uri: lb://REPORTS-ANALYTICS-SERVICE
+            predicates:
+              - Path=/reports-analytics/v3/api-docs/**
+            filters:
+              - StripPrefix=1
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: User Management
+        url: /user-management/v3/api-docs
+      - name: Player Management
+        url: /player-management/v3/api-docs
+      - name: Training & Match
+        url: /training-match/v3/api-docs
+      - name: Medical & Fitness
+        url: /medical-fitness/v3/api-docs
+      - name: Notification & Mail
+        url: /notification-mail/v3/api-docs
+      - name: Reports & Analytics
+        url: /reports-analytics/v3/api-docs
 
 eureka:
   client:
