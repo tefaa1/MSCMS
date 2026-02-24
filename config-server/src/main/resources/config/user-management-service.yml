@@ -10,11 +10,10 @@ spring:
       ddl-auto: create-drop
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   kafka:
-    bootstrap-servers: localhost:29092
+    bootstrap-servers: kafka:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
-
 
 server:
   port: 8081
@@ -28,7 +27,7 @@ keycloak:
   admin:
     username: ${KEYCLOAK_USER}
     password: ${KEYCLOAK_PASSWORD}
-    server-url: http://localhost:8443
+    server-url: http://keycloak:8080
     realm: mscms
     client-id: admin-cli
     client-uid: #for each client there is one
@@ -36,7 +35,7 @@ keycloak:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://eureka-server:8761/eureka/
     register-with-eureka: true
     fetch-registry: true
 
