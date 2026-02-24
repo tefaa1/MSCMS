@@ -28,6 +28,24 @@ services:
     networks:
       - mscms-network
 
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    ports:
+      - "9092:9092"
+    networks:
+      - mscms-network
+
   keycloak:
     image: quay.io/keycloak/keycloak:26.2.5
     container_name: keycloak
@@ -101,10 +119,27 @@ services:
       - DB_USER=embarkx
       - DB_PASSWORD=embarkx
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - APP_ADMIN_KEYCLOAK_ID=default-admin-id
+      - APP_ADMIN_FIRST_NAME=Admin
+      - APP_ADMIN_LAST_NAME=User
+      - APP_ADMIN_USERNAME=admin
+      - APP_ADMIN_EMAIL=admin@mscms.com
+      - APP_ADMIN_PASSWORD=admin123
+      - APP_ADMIN_PHONE=0000000000
+      - APP_ADMIN_AGE=30
+      - APP_ADMIN_GENDER=MALE
+      - APP_ADMIN_ADDRESS=System
+      - APP_ADMIN_BLOOD_TYPE=O_POSITIVE
+      - APP_ADMIN_ROLE=ADMIN
+      - APP_ADMIN_CREATE_DEFAULT=true
     depends_on:
       config-server:
         condition: service_healthy
       postgres:
+        condition: service_healthy
+      keycloak:
         condition: service_healthy
     networks:
       - mscms-network
@@ -178,6 +213,8 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+      kafka:
+        condition: service_started
     networks:
       - mscms-network
 
