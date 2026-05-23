@@ -288,6 +288,31 @@ services:
     networks:
       - mscms-network
 
+  # --- Machine Learning Models (Python / FastAPI) ---
+  # Both containers share the same image but run different FastAPI apps
+  # selected by working_dir. Exposed only inside mscms-network — the gateway
+  # is the public entry point (JWT + RBAC). Host ports are kept for direct
+  # debugging via Swagger UI.
+  ml-match-predictor:
+    image: shahod/sportify:latest
+    container_name: ml-match-predictor
+    working_dir: "/app/Predict Matches"
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "9000:8000"
+    networks:
+      - mscms-network
+
+  ml-player-rating:
+    image: shahod/sportify:latest
+    container_name: ml-player-rating
+    working_dir: "/app/Evaluate Players"
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "9001:8000"
+    networks:
+      - mscms-network
+
 networks:
   mscms-network:
     driver: bridge
@@ -557,6 +582,8 @@ Wait **2–3 minutes** for all services to start and register with each other.
 | **Eureka Dashboard** | http://localhost:8761 | All 8 services should show as `UP` |
 | **Swagger UI (API Docs)** | http://localhost:8080/swagger-ui.html | Interactive API testing |
 | **Keycloak Admin** | http://localhost:8443 | User: `admin` / Pass: `admin123` |
+| **ML — Match Predictor Swagger** | http://localhost:9000/docs | FastAPI direct (debugging) |
+| **ML — Player Rating Swagger** | http://localhost:9001/docs | FastAPI direct (debugging) |
 
 ---
 
@@ -744,6 +771,115 @@ The API Gateway enforces role-based security. If a role doesn't have access, you
 | `/player-analytics/**` | ADMIN, HEAD_COACH, PERFORMANCE_ANALYST, SCOUT |
 | `/scout-reports/**` | ADMIN, SCOUT |
 | `/sponsor-offers/**` | ADMIN, SPONSOR |
+| **ML Models** | |
+| `POST /ml/match-prediction` | ADMIN, HEAD_COACH, ASSISTANT_COACH, PERFORMANCE_ANALYST |
+| `GET /ml/player-rating/{playerName}` | ADMIN, HEAD_COACH, PERFORMANCE_ANALYST, SCOUT |
+
+---
+
+## 🤖 Machine Learning Models
+
+Two prediction models live as **Python / FastAPI containers** inside the same Docker network. They are *not* called directly by the frontend — the **API Gateway proxies them at `/ml/**`**, applying JWT authentication and role-based authorization just like every other endpoint. This keeps the ML stack language-agnostic (Python stays Python) while giving callers a single base URL, single auth scheme, and a single CORS policy.
+
+### Architecture
+
+```
+Frontend ──► Gateway (:8080)  ──► ml-match-predictor:8000  (Python/FastAPI)
+            │   JWT + RBAC    │
+            │   path rewrite  └─► ml-player-rating:8000    (Python/FastAPI)
+            ▼
+        /ml/match-prediction     →  POST /predict
+        /ml/player-rating/{name} →  GET  /predict/{name}
+```
+
+The host-port mappings (`9000`, `9001`) are exposed only so backend devs can hit the Swagger UI directly while testing the model. **All production traffic must go through `:8080/ml/**`** so RBAC is enforced.
+
+### Endpoint 1 — Match Outcome Prediction
+
+Predicts Win / Draw / Loss for an FC Barcelona match against a given opponent.
+
+```
+POST http://localhost:8080/ml/match-prediction
+Authorization: Bearer <YOUR_TOKEN>
+Content-Type: application/json
+
+{
+  "home_team": "FC Barcelona",
+  "away_team": "Real Madrid",
+  "referee_name": "Other"
+}
+```
+
+`referee_name` is optional and defaults to `"Other"`.
+
+**Response:**
+```json
+{
+  "match": "FC Barcelona vs Real Madrid",
+  "referee": "Other",
+  "prediction": "W",
+  "probabilities": { "W": 96.0, "D": 0.0, "L": 4.0 }
+}
+```
+
+`prediction` is one of `"W"` (win), `"D"` (draw), `"L"` (loss). `probabilities` are percentages.
+
+### Endpoint 2 — Player Rating Prediction
+
+Predicts a player's overall rating by looking up their stats from the model's built-in dataset.
+
+```
+GET http://localhost:8080/ml/player-rating/{playerName}
+Authorization: Bearer <YOUR_TOKEN>
+```
+
+URL-encode names that contain spaces — e.g. `Lionel%20Messi`.
+
+**Success response:**
+```json
+{
+  "player_name": "Lionel Messi",
+  "predicted_rating": 93.4,
+  ...
+}
+```
+
+**404 when the player is not in the dataset:**
+```json
+{ "detail": "Player 'Some Unknown Name' not found." }
+```
+
+### Direct Swagger access (debugging only)
+
+- Match Predictor — http://localhost:9000/docs
+- Player Rating — http://localhost:9001/docs
+
+These bypass authentication. Do **not** point the frontend at them.
+
+### How the gateway routes are wired
+
+Two routes were added to `config-server/.../gateway-service.yml`:
+
+```yaml
+- id: ml-match-predictor
+  uri: http://ml-match-predictor:8000
+  predicates:
+    - Path=/ml/match-prediction
+  filters:
+    - SetPath=/predict
+- id: ml-player-rating
+  uri: http://ml-player-rating:8000
+  predicates:
+    - Path=/ml/player-rating/**
+  filters:
+    - RewritePath=/ml/player-rating/(?<segment>.*), /predict/${segment}
+```
+
+And matching role rules in `GatewaySecurityConfig.java`. If you change either file, you must **rebuild and publish the `config-server` and `gateway-service` images** to GHCR for the changes to reach this docker-compose setup.
+
+### Why this integration shape?
+
+The ML APIs are small (two endpoints, stateless). Wrapping them in a dedicated Spring Boot microservice would just add a useless network hop and force DTO duplication in Java. The gateway-as-proxy pattern is the standard way to expose polyglot microservices behind a unified auth boundary — it's the same pattern used by Netflix Zuul, AWS API Gateway, and Spring Cloud Gateway examples in the official docs.
 
 ---
 
@@ -825,8 +961,12 @@ Browser/Frontend (React, Angular, etc.)
         ├── Training & Match Service
         ├── Medical & Fitness Service
         ├── Notification & Mail Service
-        └── Reports & Analytics Service
-        
+        ├── Reports & Analytics Service
+        │
+        └── ML Models (Python/FastAPI, gateway-proxied at /ml/**)
+            ├── ml-match-predictor  (:9000 host, :8000 internal)
+            └── ml-player-rating    (:9001 host, :8000 internal)
+
   Supporting Infrastructure:
   ├── Config Server (:8082) — centralized config
   ├── Eureka Server (:8761) — service discovery

@@ -157,6 +157,12 @@ public class GatewaySecurityConfig {
                         .requestMatchers("/training-analytics/**").hasAnyRole(
                                 "ADMIN", "HEAD_COACH", "FITNESS_COACH", "PERFORMANCE_ANALYST")
 
+                        // ===== ML Models (Python FastAPI proxied through gateway) =====
+                        .requestMatchers("/ml/match-prediction").hasAnyRole(
+                                "ADMIN", "HEAD_COACH", "ASSISTANT_COACH", "PERFORMANCE_ANALYST")
+                        .requestMatchers("/ml/player-rating/**").hasAnyRole(
+                                "ADMIN", "HEAD_COACH", "PERFORMANCE_ANALYST", "SCOUT")
+
                         // ===== Role-specific =====
                         .requestMatchers("/scouts/**").hasAnyRole("ADMIN", "SCOUT")
                         .requestMatchers("/sponsors/**").hasAnyRole("ADMIN", "SPONSOR")

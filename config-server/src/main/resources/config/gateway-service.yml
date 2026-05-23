@@ -32,6 +32,18 @@ spring:
             uri: lb://REPORTS-ANALYTICS-SERVICE
             predicates:
               - Path=/match-analyses/**,/player-analytics/**,/scout-reports/**,/sponsor-offers/**,/team-analytics/**,/training-analytics/**
+          - id: ml-match-predictor
+            uri: http://ml-match-predictor:8000
+            predicates:
+              - Path=/ml/match-prediction
+            filters:
+              - SetPath=/predict
+          - id: ml-player-rating
+            uri: http://ml-player-rating:8000
+            predicates:
+              - Path=/ml/player-rating/**
+            filters:
+              - RewritePath=/ml/player-rating/(?<segment>.*), /predict/${segment}
           - id: user-management-api-docs
             uri: lb://USER-MANAGEMENT-SERVICE
             predicates:
